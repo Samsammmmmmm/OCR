@@ -2,33 +2,53 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-//to dowload the picture, put it in black and smooth it
-int main(void)
+// dowload the picture
+int download(char image[])
 {
-    SDL_Surface* image = IMG_Load("image.png");
-    if(!image)
+    SDL_Surface* img = IMG_Load(image);
+    if(!img)
     {
         printf("Erreur de chargement de l'image : %s",SDL_GetError());
         return -1;
     }
+    else
+    {
+        printf("Image loaded\n");
+        return 0;
+     }
+}
+
+// print the picture
+void print_pic(char image[])
+{
+    SDL_Event event;
+    SDL_Renderer *renderer = NULL;
+    SDL_Texture *texture = NULL;
+    SDL_Window *window = NULL;
+
+    SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
+    SDL_CreateWindowAndRenderer(500, 500, 0, &window, &renderer);
+    IMG_Init(IMG_INIT_PNG);
+    texture = IMG_LoadTexture(renderer, image);
+    while (1)
+    {
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
+        if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
+            break;
+    }
+    SDL_DestroyTexture(texture);
+    IMG_Quit();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
+//
 
     //take pixel image and put it in shades of grey
-    //voir si ca marche
-    SDL_UnlockSurface(image);
-    Uint32 pixels;
-    size_t i, j;
-    image = SDL_CreateRGBSurfaceWithFormat(0, 255, 255, 32, SDL_PIXELFORMAT_RGBA8888);
-    image = SDL_CreateRGBSurface(0, 200, 200, 32, format->Rmask,
-                                   format->Gmask, format->Bmask, format->Amask);
-    SDL_LockSurface(image);
-    pixels = image->pixels;
-    for(i = 0; i < 255; i++)
-    {
-        for(j = 0; j < 255; j++)
-            pixels[i 255 + j] = SDL_MapRGBA(image->format, 0, 0, (Uint8)i, 255);
-    }
 
     //gaussian filter : smooth the picture
 
     //pass the picture only in black and white
-}
+
