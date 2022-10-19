@@ -22,11 +22,11 @@ void draw(SDL_Renderer* renderer, SDL_Texture* texture, double angle)
 // renderer: Renderer to draw on.
 // colored: Texture that contains the colored image.
 // grayscale: Texture that contains the grayscale image.
-void event_loop(SDL_Renderer* renderer, SDL_Texture* texture)
+void event_loop(SDL_Renderer* renderer, SDL_Texture* texture, double angle_para)
 {
     SDL_Event event;
 
-    double angle = 0;
+    double angle = angle_para;
     /*SDL_StartTextInput();
       char text[] = "";*/
     
@@ -47,7 +47,7 @@ void event_loop(SDL_Renderer* renderer, SDL_Texture* texture)
 	case SDL_WINDOWEVENT:
 	  if (event.window.event == SDL_WINDOWEVENT_RESIZED)
 	    {
-	      draw(renderer, texture, 0);
+	      draw(renderer, texture, angle);
 	    }
 	  break;
 	case SDL_KEYDOWN:
@@ -97,8 +97,8 @@ SDL_Surface* load_image(const char* path)
 int main(int argc, char** argv)
 {
     // Checks the number of arguments.
-    if (argc != 2)
-        errx(EXIT_FAILURE, "Usage: image-file");
+    if (argc != 2 && argc != 3)
+        errx(EXIT_FAILURE, "Usage: image-file angle-rotation");
 
     // Initializes the SDL.
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -128,8 +128,11 @@ int main(int argc, char** argv)
     SDL_FreeSurface(surface);
     
     // Dispatches the events.
-    event_loop(renderer, texture);
-    
+    if (argc==3)
+      event_loop(renderer, texture, atof(argv[2]));
+    else
+      event_loop(renderer, texture, 0);
+      
     // Destroys the objects.
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
