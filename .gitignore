@@ -53,3 +53,4 @@ dkms.conf
 
 #VScode
 .vs/*
+.vscode/*
