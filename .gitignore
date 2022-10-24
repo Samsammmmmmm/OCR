@@ -52,5 +52,5 @@ Mkfile.old
 dkms.conf
 
 #VScode
-.vs/*
-.vscode/*
+.vs/
+.vscode/
