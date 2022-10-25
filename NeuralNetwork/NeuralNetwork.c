@@ -1,36 +1,5 @@
 #include "NeuralNetwork.h"
 
-double relu(double x)
-{
-    if(x > 0)
-    {
-        return x;
-    }
-    return 0;
-};
-
-neuron create_neuron(int number_weights)
-{
-    neuron _neuron;
-    _neuron.activation = 0.0;
-    _neuron.bias = 0.0;
-    _neuron.number_weights = number_weights;
-    _neuron.weights = malloc(number_weights * sizeof(double));
-    return _neuron;
-};
-
-layer create_layer(int number_neurons, int number_neurons_previous)
-{
-    layer _layer;
-    _layer.number_neurons = number_neurons;
-    _layer.neurons = malloc(number_neurons * sizeof(struct neuron));
-    for (int k = 0; k < number_neurons; k++)
-    {
-        _layer.neurons[k] = create_neuron(number_neurons_previous);
-    }
-    return _layer;
-};
-
 network create_network(int size_input, int size_hidden, int size_output, 
 int number_layers)
 {
@@ -41,33 +10,124 @@ int number_layers)
     _network.size_output = size_output;
     _network.layers = malloc(number_layers * sizeof(struct layer));
 
-        //input layer
+    //input layer
     _network.layers[0] = create_layer(size_input, 0); 
-        //hidden layer
-    for (int i = 0; i < number_layers - 2; i++)
+
+    //hidden layer
+    for (int i = 1; i < number_layers - 1; i++)
     {
-        _network.layers[i + 1] = create_layer(size_hidden, 
-            _network.layers[i - 1].number_neurons);
+        if (i == 1)
+            //input layer to hidden layer
+        {
+            _network.layers[i] = create_layer(size_hidden, size_input);
+        }
+        else
+            //hidden layer to hidden layer
+        {
+            _network.layers[i] = create_layer(size_hidden, size_hidden);
+        }
     }
-        //ouput layer
-    _network.layers[number_layers - 1] = create_layer(size_output,
-        _network.layers[number_layers - 2].number_neurons);
+
+    //ouput layer
+    _network.layers[number_layers - 1] = create_layer(size_output, size_hidden);
     
     return _network;
 }
 
 void initialize_weights(network *_network)
 {
-    for (int i = 0; i < _network->number_layers; i++)
+    for (int layers_nb = 0; layers_nb < _network->number_layers; layers_nb++)
     {
-        layer *_layer = &(_network->layers[i]);
-        for (int j = 0; i < _layer->number_neurons; j++)
+        for (int neurons_nb = 0; neurons_nb < 
+            _network->layers[layers_nb].number_neurons; neurons_nb++)
         {
-            neuron *_neuron = &(_layer->neurons[j]);
-            for (int k = 0; i < _neuron->number_weights; k++)
+            for (int weights_nb = 0; weights_nb < _network->layers[layers_nb].
+                neurons[neurons_nb].number_weights; weights_nb++)
             {
-                _neuron->weights[k] = ((double)rand() / (double)RAND_MAX);
+                _network->layers[layers_nb].neurons[neurons_nb].
+                    weights[weights_nb] = 
+                    ((double)rand() / (double)RAND_MAX);
+            }
+
+            _network->layers[layers_nb].neurons[neurons_nb].bias = 
+                ((double)rand() / (double)RAND_MAX);
+        }
+    }
+}
+
+void set_inputs(network *_network, int inputs[])
+{
+    //initialize the first layer with inputs
+    for (int neurons_nb = 0; neurons_nb < _network->layers[0].number_neurons;  
+        neurons_nb++)
+    {
+        _network->layers[0].neurons[neurons_nb].activation = inputs[neurons_nb];
+    }
+}
+
+void forward_prop(network *_network, int inputs[])
+{
+    set_inputs(_network, inputs);
+
+    double total = 0;
+    for (int layers_nb = 1; layers_nb < _network->number_layers; layers_nb++)
+    {
+        for (int neurons_nb = 0; neurons_nb < 
+            _network->layers[layers_nb].number_neurons; neurons_nb++)
+        {
+            total = _network->layers[layers_nb].neurons[neurons_nb].bias;
+
+            for (int prevlayerNeurons_nb = 0; prevlayerNeurons_nb <
+                _network->layers[layers_nb - 1].number_neurons; 
+                prevlayerNeurons_nb++)
+            {
+                //multiplies the activation of the previous neuron by 
+                //the weight between the previous neuron and the current neuron
+                total += _network->layers[layers_nb - 1].
+                    neurons[prevlayerNeurons_nb].activation * 
+                    _network->layers[layers_nb].neurons[neurons_nb].
+                    weights[prevlayerNeurons_nb];
+            }
+            //Relu for hidden layers
+            if (layers_nb < _network->number_layers - 1)
+            {
+                if (total > 0)
+                {
+                    _network->layers[layers_nb].neurons[neurons_nb].activation =
+                        total;
+                }
+                else
+                {
+                    _network->layers[layers_nb].neurons[neurons_nb].activation =
+                        0;
+                }
+            }
+            else
+            {
+                _network->layers[layers_nb].neurons[neurons_nb].activation = 
+                    total;
             }
         }
     }
+    
+    //Softmax for output layer
+    layer outputLayer = _network->layers[_network->number_layers - 1];
+    total = 0;
+    for (int neurons_nb = 0; neurons_nb < outputLayer.number_neurons; 
+        neurons_nb++)
+    {
+        double value = exp(outputLayer.neurons[neurons_nb].activation);
+        outputLayer.neurons[neurons_nb].activation = value;
+        total += value;
+    }
+    for (int neurons_nb = 0; neurons_nb < outputLayer.number_neurons; 
+        neurons_nb++)
+    {
+        outputLayer.neurons[neurons_nb].activation /= total;
+    }
+}
+
+void back_prop(network *_network, int k)
+{
+    
 }
