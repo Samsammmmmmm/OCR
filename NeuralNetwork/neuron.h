@@ -5,6 +5,8 @@ typedef struct neuron
 {
     double activation;
     double bias;
+    double z;   //weighted inputs
+    double error;
     int number_weights;
     double *weights;
 } neuron;
