@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include "NeuralNetwork.h"
 
-void XOR(network _network, double inputs[]);
-
-void train(network _network, int epochs);
+void XOR(int epochs);
 
 int main();

@@ -15,7 +15,7 @@ typedef struct network
 
 double relu(double k);
 
-double relu_prime(double k)
+double relu_prime(double k);
 
 network create_network(int size_input, int size_hidden, int size_output, 
     int number_layers);

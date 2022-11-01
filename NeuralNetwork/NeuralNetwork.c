@@ -10,7 +10,6 @@ double relu(double k)
     {
         return 0;
     }
-    
 }
 
 double relu_prime(double k)
