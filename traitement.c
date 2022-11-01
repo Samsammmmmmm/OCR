@@ -117,3 +117,38 @@ void gamma_filter(SDL_Surface* surface)
     }
 }
 
+double _contrast_filter(Uint8 p, int contrast)
+{
+    double c = clamp(contrast, 0, 128);
+    double factor = (259 * (c + 255)) / (255 * (259 - c));
+
+    return clamp(factor * (p - 128) + 128, 0, 255);
+}
+
+Uint32 pixel_to_contrast(Uint32 pixel_color, SDL_PixelFormat* format)
+{
+    Uint8 r, g, b;
+    SDL_GetRGB(pixel_color, format, &r, &g, &b);
+    _contrast_filter(r, *r);
+    _contrast_filter(g, *g);
+    _contrast_filter(b, *b);
+    Uint32 color = SDL_MapRGB(format, r,g,b);
+    return color;
+}
+
+void contrast_filter(SDL_Surface* surface)
+{
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            pixels[i] = pixel_to_contrast(pixels[i], format);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}
