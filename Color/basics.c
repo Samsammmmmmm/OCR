@@ -3,6 +3,10 @@
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <float.h>
+#include <gtk/gtk.h>
+#include <limits.h>
+#include "basics.h"
 
 SDL_Surface *load_image(const char *path)
 {
