@@ -1,6 +1,9 @@
 #ifndef FILTER_FUNCT.H
 #define FILTER_FUNCT.H
 
+#include <err.h>
+#include <stdio.h>
+#include "basics.h"
 
 static void pixel_to_grayscale(Pixel *pixel, int brightness);
 static double gamma_filter(double p, int gamma);
