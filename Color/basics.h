@@ -1,6 +1,25 @@
 #ifndef BASICS_H
 #define BASICS_H
 
+#include <gtk/gtk.h>
+#include <stdio.h>
+
+struct Pixel
+{
+    Uint8 r, g, b;
+};
+typedef struct Pixel Pixel;
+
+struct Image
+{
+    int height;
+    int width;
+    SDL_Surface *surface;
+    Pixel **pixels;
+    double average_color;
+};
+typedef struct Image Image;
+
 SDL_Surface *load_image(const char *path);
 void save_image(SDL_Surface *image, char *path);
 Uint32 get_pixel(SDL_Surface *surface, int x, int y);
