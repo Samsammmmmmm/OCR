@@ -3,6 +3,8 @@
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <pthread.h>
+#include "basics.h"
 
 
 static void pixel_to_grayscale(Pixel *pixel, int brightness)
