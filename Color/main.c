@@ -33,23 +33,28 @@ int main(int argc, char** argv)
     if (surface == NULL)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     //printf("5\n");
+    save_image(surface, "ref.png");
+    SDL_FreeSurface(surface);
     // Create a texture from the colored surface.
     SDL_Texture* texture = IMG_LoadTexture(renderer, argv[1]);
     if (texture == NULL)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     //printf("6\n");
     // - Convert the surface into grayscale.
-    surface_to_grayscale(surface);
-    SDL_Texture* resultbis = SDL_CreateTextureFromSurface(renderer, surface);
+    Image *img= surface_to_image(surface);
+    filter_grayscale(&img);
+    Surface result= image_to_surface(&img);
     // - Free the surface.
-    SDL_FreeSurface(surface);
+    save_image(result, "grayscale.png");
+    SDL_FreeSurface(result);
+
     //printf("10\n");
     // - Dispatch the events.
-    print_pic(renderer, resultbis);
+    print_pic(renderer, result);
     //printf("11\n");
     // - Destroy the objects.
     SDL_DestroyTexture(texture);
-    SDL_DestroyTexture(resultbis);
+    SDL_DestroyTexture(result);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
     //printf("12\n");
