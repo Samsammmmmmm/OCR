@@ -19,6 +19,12 @@ void save_image(SDL_Surface *image, char *path)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 }
 
+static inline Uint8 *pixel_ref(SDL_Surface *surf, unsigned x, unsigned y)
+{
+    int bpp = surf->format->BytesPerPixel;
+    return (Uint8 *)surf->pixels + y * surf->pitch + x * bpp;
+}
+
 Uint32 get_pixel(SDL_Surface *surface, int x, int y)
 {
     int bpp = surface->format->BytesPerPixel;
