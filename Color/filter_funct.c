@@ -77,7 +77,7 @@ void otsu_tresholding(SDL_Surface* surface)
             Uint8 r, g, b;
             SDL_GetRGB(pixels[i], format, &r, &g, &b);
             Uint8 average = 0.3 * r + 0.59 * g + 0.11 * b;
-            if (average < threshold)
+            if (average > threshold)
                 pixels[i] = SDL_MapRGB(format, 0, 0, 0);
             else
                 pixels[i] = SDL_MapRGB(format, 255, 255, 255);
@@ -85,3 +85,55 @@ void otsu_tresholding(SDL_Surface* surface)
         SDL_UnlockSurface(surface);
     }
 }
+
+void sauvola_tresholding(SDL_Surface* surface)
+{
+    int* histogram = surface_to_histogram(surface);
+    int total = surface->w * surface->h;
+    float sum = 0;
+    for (int i = 0; i < 256; i++)
+        sum += i * histogram[i];
+    float sumB = 0;
+    int wB = 0;
+    int wF = 0;
+    float varMax = 0;
+    int threshold = 0;
+    for (int i = 0; i < 256; i++)
+    {
+        wB += histogram[i];
+        if (wB == 0)
+            continue;
+        wF = total - wB;
+        if (wF == 0)
+            break;
+        sumB += i * histogram[i];
+        float mB = sumB / wB;
+        float mF = (sum - sumB) / wF;
+        float varBetween = wB * wF * (mB - mF) * (mB - mF);
+        if (varBetween > varMax)
+        {
+            varMax = varBetween;
+            threshold = i;
+        }
+    }
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            Uint8 r, g, b;
+            SDL_GetRGB(pixels[i], format, &r, &g, &b);
+            Uint8 average = 0.3 * r + 0.59 * g + 0.11 * b;
+            if (average > threshold)
+                pixels[i] = SDL_MapRGB(format, 0, 0, 0);
+            else
+                pixels[i] = SDL_MapRGB(format, 255, 255, 255);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}
+
