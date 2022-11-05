@@ -1,19 +1,30 @@
 #include <stdio.h>
-#include <maths.h>
 #include <err.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <float.h>
-#include <gtk/gtk.h>
-#include <limits.h>
 #include "basics.h"
+#include <limits.h>
 
-SDL_Surface *load_image(const char *path)
+double clamp(double d, double min, double max)
 {
-    SDL_Surface *image = IMG_Load(path);
+    const double t = d < min ? min : d;
+    return t > max ? max : t;
+}
+
+SDL_Surface* load_image(const char* path)
+{
+    //load image
+    SDL_Surface* image=IMG_Load(path);
     if (image == NULL)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
-    return image;
+    //create new surface
+    SDL_Surface* result =SDL_ConvertSurfaceFormat (image, SDL_PIXELFORMAT_RGB888, 0);
+    if (result == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    //free temporary surface
+    SDL_FreeSurface(image);
+    //return desired image
+    return result;
 }
 
 void save_image(SDL_Surface *image, char *path)
@@ -21,12 +32,6 @@ void save_image(SDL_Surface *image, char *path)
     int saved = IMG_SavePNG(image, path);
     if (saved != 0)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
-}
-
-static inline Uint8 *pixel_ref(SDL_Surface *surf, unsigned x, unsigned y)
-{
-    int bpp = surf->format->BytesPerPixel;
-    return (Uint8 *)surf->pixels + y * surf->pitch + x * bpp;
 }
 
 Uint32 get_pixel(SDL_Surface *surface, int x, int y)
@@ -83,77 +88,7 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-Image SDL_Surface_to_Image(SDL_Surface *surface)
-{
-    Image image;
-    image.width = surface->w;
-    image.height = surface->h;
-    image.pixels = malloc(image.width * image.height * sizeof(Uint32));
-    for (int i = 0; i < image.width; i++)
-    {
-        for (int j = 0; j < image.height; j++)
-        {
-            Uint32 pixel = get_pixel(surface, i, j);
-            image.pixels[i + j * image.width] = pixel;
-        }
-    }
-    return image;
-}
 
-SDL_Surface Image_to_SDL_Surface(Image image)
-{
-    SDL_Surface *surface = SDL_CreateRGBSurface(0, image.width, image.height, 32, 0, 0, 0, 0);
-    if (surface == NULL)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    for (int i = 0; i < image.width; i++)
-    {
-        for (int j = 0; j < image.height; j++)
-        {
-            Uint32 pixel = image.pixels[i + j * image.width];
-            put_pixel(surface, i, j, pixel);
-        }
-    }
-    return surface;
-}
-
-int *Image_to_Array(Image *source)
-{
-    int *result = malloc(sizeof(int) * source->width * source->height);
-    int w = source->width, h = source->height;
-    for (int x = 0; x < w; x++)
-    {
-        for (int y = 0; y < h; y++)
-        {
-            result[x + y * w] = source->pixels[x][y].r;
-        }
-    }
-    return result;
-}
-
-Image *Array_to_Image(int *source, int w, int h)
-{
-    Image *result = new_Image(w, h);
-    for (int x = 0; x < w; x++)
-    {
-        for (int y = 0; y < h; y++)
-        {
-            result->pixels[x][y].r = source[x + y * w];
-            result->pixels[x][y].g = source[x + y * w];
-            result->pixels[x][y].b = source[x + y * w];
-        }
-    }
-    return result;
-}
-
-void free_image(Image *image)
-{
-    for (int x = 0; x < image->width; x++)
-    {
-        free(image->pixels[x]);
-    }
-    free(image->pixels);
-    free(image);
-}
 
 int *image_grayscale_histogram(Image *image, int startx, int endx, int starty, int endy)
 {
@@ -198,18 +133,30 @@ int get_histogram_max(int *hist)
     return maxc;
 }
 
-void image_filter(Image *image, int startx, int endx, int starty, int endy, int (*filter)(int))
+
+void print_pic(SDL_Renderer* renderer,SDL_Texture* texture )
 {
-    for (int x = startx; x < endx && x < image->width; x++)
+    SDL_Event event;
+
+    while (1)
     {
-        for (int y = starty; y < endy && y < image->height; y++)
+        SDL_WaitEvent(&event);
+
+        switch (event.type)
         {
-            int r = filter(image->pixels[x][y].r);
-            int g = filter(image->pixels[x][y].g);
-            int b = filter(image->pixels[x][y].b);
-            image->pixels[x][y].r = r;
-            image->pixels[x][y].g = g;
-            image->pixels[x][y].b = b;
+            // If the "quit" button is pushed, ends the event loop.
+            case SDL_QUIT:
+                return;
+
+            // If the window is resized, updates and redraws the diagonals.
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+                {
+                    SDL_RenderCopy(renderer, texture, NULL, NULL);
+                    SDL_RenderPresent(renderer);
+                }
+                break;
+
         }
     }
 }
