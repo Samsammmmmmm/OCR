@@ -1,8 +1,9 @@
 all:
-	gcc -c layer.c
-	gcc -c neuron.c
-	gcc -c NeuralNetwork.c
-	gcc -c Xor.c
-	gcc -g -o Xor.out Xor.o NeuralNetwork.o layer.o neuron.o -lm
+	gcc -c -Wall -Wextra layer.c
+	gcc -c -Wall -Wextra neuron.c
+	gcc -c -Wall -Wextra NeuralNetwork.c
+	gcc -c -Wall -Wextra Load_Save.c
+	gcc -c -Wall -Wextra Xor.c
+	gcc -Wall -Wextra -o Xor.out Xor.o Load_Save.o NeuralNetwork.o layer.o neuron.o -lm
 clean:
-	rm *.o Xor.out
+	rm *.o weights.txt Xor.out
