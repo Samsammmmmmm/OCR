@@ -174,3 +174,25 @@ void filter_median(SDL_Surface* surface)
         SDL_UnlockSurface(surface);
     }
 }
+
+void filter_contrast(SDL_Surface* surface, int contrast)
+{
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            Uint8 r, g, b;
+            SDL_GetRGB(pixels[i], format, &r, &g, &b);
+            r = (r - 128) * contrast / 100 + 128;
+            g = (g - 128) * contrast / 100 + 128;
+            b = (b - 128) * contrast / 100 + 128;
+            pixels[i] = SDL_MapRGB(format, r, g, b);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}
