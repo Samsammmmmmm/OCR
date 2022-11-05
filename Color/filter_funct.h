@@ -8,5 +8,6 @@
 Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format);
 void surface_to_grayscale(SDL_Surface* surface);
 void otsu_tresholding(SDL_Surface *surface);
+void sauvola_tresholding(SDL_Surface* surface);
 
 #endif
