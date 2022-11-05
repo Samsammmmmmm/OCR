@@ -5,12 +5,6 @@
 #include "basics.h"
 #include <limits.h>
 
-double clamp(double d, double min, double max)
-{
-    const double t = d < min ? min : d;
-    return t > max ? max : t;
-}
-
 SDL_Surface* load_image(const char* path)
 {
     //load image
@@ -105,36 +99,6 @@ int *surface_to_histogram(SDL_Surface *surface)
         }
     }
     return histogram;
-}
-
-int get_histogram_min(int *hist)
-{
-    int min = INT_MAX;
-    int minc = 0;
-    for (int i = 0; i < 256; i++)
-    {
-        if (hist[i] < min)
-        {
-            min = hist[i];
-            minc = i;
-        }
-    }
-    return minc;
-}
-
-int get_histogram_max(int *hist)
-{
-    int max = INT_MIN;
-    int maxc = 0;
-    for (int i = 0; i < 256; i++)
-    {
-        if (hist[i] > max)
-        {
-            max = hist[i];
-            maxc = i;
-        }
-    }
-    return maxc;
 }
 
 
