@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     SDL_SetWindowSize(window, surface->w, surface->h);
 
     // - Convert the surface into grayscale.
-    otsu_tresholding(surface);
+    sauvola_tresholding(surface);
     save_image(surface, "ref.png");
 
     // - Create a new texture from the grayscale surface.
