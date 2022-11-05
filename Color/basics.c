@@ -88,19 +88,23 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-
-
-int *image_grayscale_histogram(Image *image, int startx, int endx, int starty, int endy)
+int *surface_to_histogram(SDL_Surface *surface)
 {
-    int *hist = calloc(sizeof(int), 256);
-    for (int x = startx; x < endx && x < image->width; x++)
+    int *histogram = calloc(256, sizeof(int));
+    if (histogram == NULL)
+        errx(EXIT_FAILURE, "calloc failed");
+    Uint32 pixel;
+    Uint8 r, g, b;
+    for (int x = 0; x < surface->w; x++)
     {
-        for (int y = starty; y < endy && y < image->height; y++)
+        for (int y = 0; y < surface->h; y++)
         {
-            hist[image->pixels[x][y].r]++;
+            pixel = get_pixel(surface, x, y);
+            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+            histogram[r]++;
         }
     }
-    return hist;
+    return histogram;
 }
 
 int get_histogram_min(int *hist)
