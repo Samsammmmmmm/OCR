@@ -35,50 +35,6 @@ void surface_to_grayscale(SDL_Surface* surface)
     }
 }
 
-void gaussian_filter(SDL_Surface* surface)
-{
-    int kernel[3][3] = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
-    int kernel_sum = 16;
-    int kernel_size = 3;
-    int kernel_offset = kernel_size / 2;
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    SDL_PixelFormat* format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    else
-    {
-        for (int i = 0; i < len; i++)
-        {
-            int x = i % surface->w;
-            int y = i / surface->w;
-            int r = 0, g = 0, b = 0;
-            for (int j = 0; j < kernel_size; j++)
-            {
-                for (int k = 0; k < kernel_size; k++)
-                {
-                    int x_offset = x + j - kernel_offset;
-                    int y_offset = y + k - kernel_offset;
-                    if (x_offset < 0 || x_offset >= surface->w || y_offset < 0 || y_offset >= surface->h)
-                        continue;
-                    Uint32 pixel = get_pixel(surface, x_offset, y_offset);
-                    Uint8 r_offset, g_offset, b_offset;
-                    SDL_GetRGB(pixel, format, &r_offset, &g_offset, &b_offset);
-                    r += r_offset * kernel[j][k];
-                    g += g_offset * kernel[j][k];
-                    b += b_offset * kernel[j][k];
-                }
-            }
-            r /= kernel_sum;
-            g /= kernel_sum;
-            b /= kernel_sum;
-            Uint32 color = SDL_MapRGB(format, r, g, b);
-            put_pixel(surface, x, y, color);
-        }
-        SDL_UnlockSurface(surface);
-    }
-}
-
 void otsu_tresholding(SDL_Surface* surface)
 {
     int* histogram = surface_to_histogram(surface);
@@ -181,3 +137,40 @@ void sauvola_tresholding(SDL_Surface* surface)
     }
 }
 
+void filter_median(SDL_Surface* surface)
+{
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            int x = i % surface->w;
+            int y = i / surface->w;
+            int r = 0;
+            int g = 0;
+            int b = 0;
+            int count = 0;
+            for (int j = -1; j <= 1; j++)
+            {
+                for (int k = -1; k <= 1; k++)
+                {
+                    if (x + j >= 0 && x + j < surface->w && y + k >= 0 && y + k < surface->h)
+                    {
+                        Uint8 r1, g1, b1;
+                        SDL_GetRGB(pixels[(y + k) * surface->w + (x + j)], format, &r1, &g1, &b1);
+                        r += r1;
+                        g += g1;
+                        b += b1;
+                        count++;
+                    }
+                }
+            }
+            pixels[i] = SDL_MapRGB(format, r / count, g / count, b / count);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}

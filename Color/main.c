@@ -40,6 +40,8 @@ int main(int argc, char** argv)
     SDL_SetWindowSize(window, surface->w, surface->h);
 
     // - Convert the surface into grayscale.
+    filter_median(surface);
+    save_image(surface, "median.png");
     sauvola_tresholding(surface);
     save_image(surface, "ref.png");
 
