@@ -5,12 +5,6 @@
 #include "basics.h"
 #include <limits.h>
 
-double clamp(double d, double min, double max)
-{
-    const double t = d < min ? min : d;
-    return t > max ? max : t;
-}
-
 SDL_Surface* load_image(const char* path)
 {
     //load image
@@ -88,49 +82,23 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-
-
-int *image_grayscale_histogram(Image *image, int startx, int endx, int starty, int endy)
+int *surface_to_histogram(SDL_Surface *surface)
 {
-    int *hist = calloc(sizeof(int), 256);
-    for (int x = startx; x < endx && x < image->width; x++)
+    int *histogram = calloc(256, sizeof(int));
+    if (histogram == NULL)
+        errx(EXIT_FAILURE, "calloc failed");
+    Uint32 pixel;
+    Uint8 r, g, b;
+    for (int x = 0; x < surface->w; x++)
     {
-        for (int y = starty; y < endy && y < image->height; y++)
+        for (int y = 0; y < surface->h; y++)
         {
-            hist[image->pixels[x][y].r]++;
+            pixel = get_pixel(surface, x, y);
+            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+            histogram[r]++;
         }
     }
-    return hist;
-}
-
-int get_histogram_min(int *hist)
-{
-    int min = INT_MAX;
-    int minc = 0;
-    for (int i = 0; i < 256; i++)
-    {
-        if (hist[i] < min)
-        {
-            min = hist[i];
-            minc = i;
-        }
-    }
-    return minc;
-}
-
-int get_histogram_max(int *hist)
-{
-    int max = INT_MIN;
-    int maxc = 0;
-    for (int i = 0; i < 256; i++)
-    {
-        if (hist[i] > max)
-        {
-            max = hist[i];
-            maxc = i;
-        }
-    }
-    return maxc;
+    return histogram;
 }
 
 

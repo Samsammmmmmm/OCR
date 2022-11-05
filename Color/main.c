@@ -39,9 +39,13 @@ int main(int argc, char** argv)
     // - Resize the window according to the size of the image.
     SDL_SetWindowSize(window, surface->w, surface->h);
 
-    // - Convert the surface into grayscale.
-    surface_to_grayscale(surface);
-    save_image(surface, "ref.png");
+    // - Convert the surface into black and white
+    //filter_median(surface);
+    //save_image(surface, "median.png");
+    //filter_contrast(surface,128);
+    //save_image(surface, "contrast.png");
+    sauvola_tresholding(surface);
+    save_image(surface, "result.png");
 
     // - Create a new texture from the grayscale surface.
     SDL_Texture* result=SDL_CreateTextureFromSurface(renderer, surface);
