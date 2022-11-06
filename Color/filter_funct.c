@@ -36,6 +36,7 @@ void surface_to_grayscale(SDL_Surface* surface)
     }
 }
 
+//apply otsu tresholding to a surface
 void otsu_tresholding(SDL_Surface* surface)
 {
     int* histogram = surface_to_histogram(surface);
@@ -87,6 +88,8 @@ void otsu_tresholding(SDL_Surface* surface)
     }
 }
 
+
+//apply sauvola tresholding to a surface
 void sauvola_tresholding(SDL_Surface* surface, int radius, float k)
 {
     Uint32* pixels = surface->pixels;
@@ -140,29 +143,7 @@ void sauvola_tresholding(SDL_Surface* surface, int radius, float k)
     }
 }
 
-
-void filter_contrast(SDL_Surface* surface, int contrast)
-{
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    SDL_PixelFormat* format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    else
-    {
-        for (int i = 0; i < len; i++)
-        {
-            Uint8 r, g, b;
-            SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            r = (r - 128) * contrast / 100 + 128;
-            g = (g - 128) * contrast / 100 + 128;
-            b = (b - 128) * contrast / 100 + 128;
-            pixels[i] = SDL_MapRGB(format, r, g, b);
-        }
-        SDL_UnlockSurface(surface);
-    }
-}
-
+//median filter function
 void filter_median(SDL_Surface* surface)
 {
     Uint32* pixels = surface->pixels;
@@ -201,6 +182,8 @@ void filter_median(SDL_Surface* surface)
     }
 }
 
+
+// contrast filter function
 void filter_contrast(SDL_Surface* surface, int contrast)
 {
     Uint32* pixels = surface->pixels;
