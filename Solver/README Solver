@@ -1,9 +1,5 @@
-Solver réalisé par Lisa
-
-pour le solver, j'ai créer 2 fichiers .c ainsi que leurs headers. 
-sudokuSlover.c contient les fonctions is_valid et l'algorithme de backtracking qui me permettent de résoudre une grille.
-load_and_save.c contient la fonction qui me servent à ouvrir le fichier texte fourni et le convertir en double char array, 
-ainsi que la fonction qui créer un nouveau fichier avec filename.result et save la grille résolue.
-Enfin, il y a le fichier main.c qui appelle les différentes fonctions.
-Le Makefile permet de compiler tous les fichiers .c et d'emettre un executable solver.
-Lorsque celui ci est appelé avec ./solver filename, il créer un fichier texte .result contenant la matrice résolue.
+to test the solver, enter these:
+make
+./solver grid_00.txt
+cat grid_00.txt.result
+make clean
