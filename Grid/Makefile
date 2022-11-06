@@ -10,4 +10,4 @@ all:
 	gcc *.o -o main -lSDL -lSDL2_image
 
 clean:
-	rm -rf *[.do] main rota hough *~
+	rm -rf *[.do] main hough *~ *.bmp

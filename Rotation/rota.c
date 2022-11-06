@@ -1,9 +1,4 @@
-#include <err.h>
-#include </opt/homebrew/include/SDL2/SDL.h>
-#include </opt/homebrew/Cellar/sdl2_image/2.6.2/include/SDL2/SDL_image.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "rota.h"
 
 // Updates the display.
 //
@@ -119,7 +114,11 @@ int main(int argc, char** argv)
     if (surface == NULL)
       errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    SDL_SetWindowSize(window, surface->w, surface->h);
+    int w = surface->w;
+    int h = surface->h;
+    int new_dim = (int)sqrt(w*w+h*h);
+    
+    SDL_SetWindowSize(window, new_dim, new_dim);
     
     SDL_Texture* texture =  SDL_CreateTextureFromSurface(renderer, surface);
     if (texture == NULL)

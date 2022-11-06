@@ -90,47 +90,6 @@ void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel)
 	}
 }
 
-/*SDL_Surface* display_image(SDL_Surface *img, SDL_Window* window, SDL_Renderer* renderer)
-{
-  SDL_Surface *screen = SDL_GetWindowSurface(window);
-
-	// Set the window to the same size as the image
-	//screen = SDL_SetVideoMode(img->w, img->h, 0, SDL_SWSURFACE|SDL_ANYFORMAT);
-	if (screen == NULL)
-	{
-		// error management
-		errx(1, "Couldn't set %dx%d video mode: %s\n",
-				img->w, img->h, SDL_GetError());
-				}
-
-	// Blit onto the screen surface
-	if(SDL_BlitSurface(img, NULL, screen, NULL) < 0)
-	warnx("BlitSurface error: %s\n", SDL_GetError());
-
-	// Update the screen
-	SDL_UpdateWindowSurface(window);
-
-	// return the screen for further uses
-	return screen;
-	}*/
-
-void wait_for_keypressed()
-{
-	SDL_Event event;
-
-	// Wait for a key to be down.
-	do
-	{
-		SDL_PollEvent(&event);
-	} while(event.type != SDL_KEYDOWN);
-
-	// Wait for a key to be up.
-	do
-	{
-		SDL_PollEvent(&event);
-	} while(event.type != SDL_KEYUP);
-}
-
 void setlines(SDL_Surface *image, int *x, int *y)
 {
 	Uint32 pixel = SDL_MapRGB(image->format, 255, 62, 181);
@@ -152,13 +111,6 @@ void setlines(SDL_Surface *image, int *x, int *y)
 	}
 }
 
-/*void update_surface(SDL_Surface* screen, SDL_Surface* image)
-{
-	if (SDL_BlitSurface(image, NULL, screen, NULL) < 0)
-		warnx("BlitSurface error: %s\n", SDL_GetError());
-
-	SDL_UpdateRect(screen, 0, 0, image->w, image->h);
-	}*/
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -172,7 +124,7 @@ void getlines(SDL_Surface *image, int *x, int *y)
 	int nbpixelx = 0;
 	int nbpixely = 0;
 
-	for(int y = 0; y < height ; y++) //nombre pixel sur hori
+	for(int y = 0; y < height ; y++) //x axis
 	{
 		for(int x = 0; x < width ; x++)
 		{
@@ -186,7 +138,7 @@ void getlines(SDL_Surface *image, int *x, int *y)
 		nbpixelx = 0;
 	}
 
-	for(int x = 0; x < width; x++) //verti
+	for(int x = 0; x < width; x++) // y axis
 	{
 		for(int y = 0; y < height; y++)
 		{
@@ -252,7 +204,7 @@ int compare_function(const void *a,const void *b)
 	return *x - *y;
 }
 
-void segmentation(SDL_Surface *image, SDL_Window* window, SDL_Renderer* renderer)
+void segmentation(SDL_Surface *image)
 {
 	int *x = malloc(10 * sizeof(int));
 	int *y = malloc(10 * sizeof(int));
@@ -261,15 +213,10 @@ void segmentation(SDL_Surface *image, SDL_Window* window, SDL_Renderer* renderer
 
 	qsort(x,10,sizeof(int),compare_function);
 	qsort(y,10,sizeof(int),compare_function);
-	//display_image(image, window, renderer);
-	//SDL_RenderPresent(renderer);
 	setlines(image,x,y);
 	SDL_SaveBMP(image, "test.bmp");
-	//SDL_RenderPresent(renderer);
-	//display_image(image, window, renderer);
-	//wait_for_keypressed();
-
-	/*for(int i = 0; i < 9; i++)
+	int cpt = 1;
+	for(int i = 0; i < 9; i++)
 	{
 		for(int j = 0; j < 9; j++)
 		{
@@ -279,11 +226,12 @@ void segmentation(SDL_Surface *image, SDL_Window* window, SDL_Renderer* renderer
 			rectangle.w = x[j+1] - x[j];
 			rectangle.h = y[i+1] - y[i];
 
-			SDL_Surface *croped = SDL_CreateRGBSurface(SDL_HWSURFACE, rectangle.w, rectangle.h, 32, 0, 0, 0, 0);
+			SDL_Surface *croped = SDL_CreateRGBSurface(0, rectangle.w, rectangle.h, 32, 0, 0, 0, 0);
 			SDL_BlitSurface(image,&rectangle,croped,NULL);
 
 			char buffer[100];
-			snprintf(buffer, sizeof(buffer), "./%d.bmp", i*10 + j);
+			snprintf(buffer, sizeof(buffer), "./%d.bmp", cpt);
+			cpt++;
 
 			if(SDL_SaveBMP(croped, buffer) != 0)
 			{
@@ -292,7 +240,7 @@ void segmentation(SDL_Surface *image, SDL_Window* window, SDL_Renderer* renderer
 
 			SDL_FreeSurface(croped);
 		}
-		}*/
+		}
 	free(x);
 	free(y);
 	SDL_FreeSurface(image);
@@ -321,17 +269,32 @@ int main(int argc, char **argv)
 	
 	SDL_Surface* image_surface = load_image(argv[1]);
 	
-	segmentation(image_surface, window, renderer);
+	segmentation(image_surface);
 
-	/*SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image_surface);
-
-	SDL_RenderCopy(renderer, texture, NULL, NULL);
-	SDL_RenderPresent(renderer);
-
+	//SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image_surface);
+	SDL_Surface * image = SDL_LoadBMP("test.bmp");
+	SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
+	SDL_Event event;
+	int bool = 1;
+	while (bool)
+	  {
+	    SDL_WaitEvent(&event);
+	    
+	    switch (event.type)
+	      {
+	      case SDL_QUIT:
+		bool = 0;
+		break;
+	      }
+	    SDL_RenderCopy(renderer, texture, NULL, NULL);
+	    SDL_RenderPresent(renderer);
+	  }
+	
 	SDL_DestroyTexture(texture);
 	SDL_FreeSurface(image_surface);
 	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);*/
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 	
 	return EXIT_SUCCESS;
 }
