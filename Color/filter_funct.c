@@ -4,7 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <pthread.h>
 #include "basics.h"
-#include <maths.h>
+#include <math.h>
 
 // Converts a colored pixel into grayscale tyhen in black and white.
 //
