@@ -1,4 +1,4 @@
-#include "segmentation.h"
+#include "seg.h"
 
 void init_sdl()
 {
@@ -262,9 +262,10 @@ void segmentation(SDL_Surface *image, SDL_Window* window, SDL_Renderer* renderer
 	qsort(x,10,sizeof(int),compare_function);
 	qsort(y,10,sizeof(int),compare_function);
 	//display_image(image, window, renderer);
-	SDL_RenderPresent(renderer);
+	//SDL_RenderPresent(renderer);
 	setlines(image,x,y);
-	SDL_RenderPresent(renderer);
+	SDL_SaveBMP(image, "test.bmp");
+	//SDL_RenderPresent(renderer);
 	//display_image(image, window, renderer);
 	//wait_for_keypressed();
 
@@ -321,6 +322,16 @@ int main(int argc, char **argv)
 	SDL_Surface* image_surface = load_image(argv[1]);
 	
 	segmentation(image_surface, window, renderer);
+
+	/*SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image_surface);
+
+	SDL_RenderCopy(renderer, texture, NULL, NULL);
+	SDL_RenderPresent(renderer);
+
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(image_surface);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);*/
 	
 	return EXIT_SUCCESS;
 }
