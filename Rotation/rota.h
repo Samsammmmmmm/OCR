@@ -10,7 +10,7 @@
 
 void draw(SDL_Renderer* renderer, SDL_Texture* texture, double angle);
 
-void event_loop(SDL_Renderer* renderer, SDL_Texture* texture, double angle_para);
+void event_loop(SDL_Renderer* renderer, SDL_Texture* texture, double angle_p);
 
 SDL_Surface* load_image(const char* path);
 

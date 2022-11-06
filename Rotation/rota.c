@@ -8,7 +8,8 @@ void draw(SDL_Renderer* renderer, SDL_Texture* texture, double angle)
 {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
-  SDL_RenderCopyEx(renderer, texture, NULL, NULL, angle, NULL, SDL_FLIP_NONE);
+  SDL_Rect dstrect = { 220, 100, 200, 200};
+  SDL_RenderCopyEx(renderer, texture, NULL, &dstrect, angle, NULL, SDL_FLIP_NONE);
   SDL_RenderPresent(renderer);
 }
 
@@ -114,11 +115,11 @@ int main(int argc, char** argv)
     if (surface == NULL)
       errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    int w = surface->w;
+    /*int w = surface->w;
     int h = surface->h;
     int new_dim = (int)sqrt(w*w+h*h);
     
-    SDL_SetWindowSize(window, new_dim, new_dim);
+    SDL_SetWindowSize(window, new_dim, new_dim);*/
     
     SDL_Texture* texture =  SDL_CreateTextureFromSurface(renderer, surface);
     if (texture == NULL)
