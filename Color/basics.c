@@ -21,6 +21,8 @@ SDL_Surface* load_image(const char* path)
     return result;
 }
 
+
+// - Save the surface into a PNG file.
 void save_image(SDL_Surface *image, char *path)
 {
     int saved = IMG_SavePNG(image, path);
@@ -28,6 +30,8 @@ void save_image(SDL_Surface *image, char *path)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 }
 
+
+// - get the pixel color at (x, y)
 Uint32 get_pixel(SDL_Surface *surface, int x, int y)
 {
     int bpp = surface->format->BytesPerPixel;
@@ -50,6 +54,8 @@ Uint32 get_pixel(SDL_Surface *surface, int x, int y)
     }
 }
 
+
+// - set the pixel color at (x, y)
 void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
     int bpp = surface->format->BytesPerPixel;
@@ -82,6 +88,8 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
+
+//create an histogram of the image
 int *surface_to_histogram(SDL_Surface *surface)
 {
     int *histogram = calloc(256, sizeof(int));
@@ -101,7 +109,7 @@ int *surface_to_histogram(SDL_Surface *surface)
     return histogram;
 }
 
-
+//print the image
 void print_pic(SDL_Renderer* renderer,SDL_Texture* texture )
 {
     SDL_Event event;

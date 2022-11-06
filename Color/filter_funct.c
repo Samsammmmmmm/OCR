@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <pthread.h>
 #include "basics.h"
+#include <maths.h>
 
 // Converts a colored pixel into grayscale tyhen in black and white.
 //
@@ -35,6 +36,7 @@ void surface_to_grayscale(SDL_Surface* surface)
     }
 }
 
+//apply otsu tresholding to a surface
 void otsu_tresholding(SDL_Surface* surface)
 {
     int* histogram = surface_to_histogram(surface);
@@ -86,36 +88,10 @@ void otsu_tresholding(SDL_Surface* surface)
     }
 }
 
-void sauvola_tresholding(SDL_Surface* surface)
+
+//apply sauvola tresholding to a surface
+void sauvola_tresholding(SDL_Surface* surface, int radius, float k)
 {
-    int* histogram = surface_to_histogram(surface);
-    int total = surface->w * surface->h;
-    float sum = 0;
-    for (int i = 0; i < 256; i++)
-        sum += i * histogram[i];
-    float sumB = 0;
-    int wB = 0;
-    int wF = 0;
-    float varMax = 0;
-    int threshold = 0;
-    for (int i = 0; i < 256; i++)
-    {
-        wB += histogram[i];
-        if (wB == 0)
-            continue;
-        wF = total - wB;
-        if (wF == 0)
-            break;
-        sumB += i * histogram[i];
-        float mB = sumB / wB;
-        float mF = (sum - sumB) / wF;
-        float varBetween = wB * wF * (mB - mF) * (mB - mF);
-        if (varBetween > varMax)
-        {
-            varMax = varBetween;
-            threshold = i;
-        }
-    }
     Uint32* pixels = surface->pixels;
     int len = surface->w * surface->h;
     SDL_PixelFormat* format = surface->format;
@@ -125,10 +101,40 @@ void sauvola_tresholding(SDL_Surface* surface)
     {
         for (int i = 0; i < len; i++)
         {
-            Uint8 r, g, b;
-            SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            Uint8 average = 0.3 * r + 0.59 * g + 0.11 * b;
-            if (average > threshold)
+            int x = i % surface->w;
+            int y = i / surface->w;
+            int sum = 0;
+            int count = 0;
+            for (int j = -radius; j <= radius; j++)
+            {
+                for (int k = -radius; k <= radius; k++)
+                {
+                    if (x + j >= 0 && x + j < surface->w && y + k >= 0 && y + k < surface->h)
+                    {
+                        Uint8 r, g, b;
+                        SDL_GetRGB(pixels[(y + k) * surface->w + (x + j)], format, &r, &g, &b);
+                        sum += 0.3 * r + 0.59 * g + 0.11 * b;
+                        count++;
+                    }
+                }
+            }
+            Uint8 average = sum / count;
+            sum = 0;
+            for (int j = -radius; j <= radius; j++)
+            {
+                for (int k = -radius; k <= radius; k++)
+                {
+                    if (x + j >= 0 && x + j < surface->w && y + k >= 0 && y + k < surface->h)
+                    {
+                        Uint8 r, g, b;
+                        SDL_GetRGB(pixels[(y + k) * surface->w + (x + j)], format, &r, &g, &b);
+                        sum += pow(0.3 * r + 0.59 * g + 0.11 * b - average, 2);
+                    }
+                }
+            }
+            float variance = sum / count;
+            float treshold = average * (1 + k * ((variance / 128) - 1));
+            if (average > treshold)
                 pixels[i] = SDL_MapRGB(format, 0, 0, 0);
             else
                 pixels[i] = SDL_MapRGB(format, 255, 255, 255);
@@ -137,6 +143,7 @@ void sauvola_tresholding(SDL_Surface* surface)
     }
 }
 
+//median filter function
 void filter_median(SDL_Surface* surface)
 {
     Uint32* pixels = surface->pixels;
@@ -175,6 +182,8 @@ void filter_median(SDL_Surface* surface)
     }
 }
 
+
+// contrast filter function
 void filter_contrast(SDL_Surface* surface, int contrast)
 {
     Uint32* pixels = surface->pixels;
