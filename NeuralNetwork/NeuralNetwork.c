@@ -209,7 +209,7 @@ void gradient_descent(network *_network, double eta)
                     _network->layers[layers_nb].neurons[neurons_nb].error *
                     _network->layers[layers_nb - 1].
                     neurons[prevlayerNeurons_nb].activation;
-                _network->layers[layers_nb].neurons[neurons_nb].bias =
+                _network->layers[layers_nb].neurons[neurons_nb].bias +=
                     eta * 
                     _network->layers[layers_nb].neurons[neurons_nb].error *
                     _network->layers[layers_nb - 1].
