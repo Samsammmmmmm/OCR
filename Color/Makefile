@@ -4,3 +4,5 @@ all:
 
 clean:
 	rm -rf *[.do] main *~
+	rm -rf *[.do] main *png
+	
