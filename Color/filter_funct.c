@@ -88,7 +88,6 @@ void otsu_tresholding(SDL_Surface* surface)
     }
 }
 
-
 //apply sauvola tresholding to a surface
 void sauvola_tresholding(SDL_Surface* surface, int radius, float k)
 {
@@ -143,8 +142,61 @@ void sauvola_tresholding(SDL_Surface* surface, int radius, float k)
     }
 }
 
-//median filter function
-void filter_median(SDL_Surface* surface)
+// median filter function
+void median_filter(SDL_Surface* surface, int radius)
+{
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            int x = i % surface->w;
+            int y = i / surface->w;
+            int sum = 0;
+            int count = 0;
+            int* values = malloc(sizeof(int) * (2 * radius + 1) * (2 * radius + 1));
+            for (int j = -radius; j <= radius; j++)
+            {
+                for (int k = -radius; k <= radius; k++)
+                {
+                    if (x + j >= 0 && x + j < surface->w && y + k >= 0 && y + k < surface->h)
+                    {
+                        Uint8 r, g, b;
+                        SDL_GetRGB(pixels[(y + k) * surface->w + (x + j)], format, &r, &g, &b);
+                        values[count] = 0.3 * r + 0.59 * g + 0.11 * b;
+                        count++;
+                    }
+                }
+            }
+            int temp;
+            for (int j = 0; j < count; j++)
+            {
+                for (int k = j + 1; k < count; k++)
+                {
+                    if (values[j] > values[k])
+                    {
+                        temp = values[j];
+                        values[j] = values[k];
+                        values[k] = temp;
+                    }
+                }
+            }
+            if (count % 2 == 0)
+                pixels[i] = SDL_MapRGB(format, values[count / 2], values[count / 2], values[count / 2]);
+            else
+                pixels[i] = SDL_MapRGB(format, values[count / 2 + 1], values[count / 2 + 1], values[count / 2 + 1]);
+            free(values);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}
+
+// gaussian smoothing function
+void gaussian_smoothing(SDL_Surface* surface, int sigma, int kernel)
 {
     Uint32* pixels = surface->pixels;
     int len = surface->w * surface->h;
@@ -161,30 +213,30 @@ void filter_median(SDL_Surface* surface)
             int g = 0;
             int b = 0;
             int count = 0;
-            for (int j = -1; j <= 1; j++)
+            for (int j = -kernel; j <= kernel; j++)
             {
-                for (int k = -1; k <= 1; k++)
+                for (int k = -kernel; k <= kernel; k++)
                 {
                     if (x + j >= 0 && x + j < surface->w && y + k >= 0 && y + k < surface->h)
                     {
                         Uint8 r1, g1, b1;
                         SDL_GetRGB(pixels[(y + k) * surface->w + (x + j)], format, &r1, &g1, &b1);
-                        r += r1;
-                        g += g1;
-                        b += b1;
+                        r += r1 * exp(-(pow(j, 2) + pow(k, 2)) / (2 * pow(sigma, 2)));
+                        //no need to do it for the other colors
                         count++;
                     }
                 }
             }
-            pixels[i] = SDL_MapRGB(format, r / count, g / count, b / count);
+            pixels[i] = SDL_MapRGB(format, r / count, r / count, r / count);
         }
         SDL_UnlockSurface(surface);
     }
 }
 
 
+
 // contrast filter function
-void filter_contrast(SDL_Surface* surface, int contrast)
+void contrast_filter(SDL_Surface* surface, float contrast)
 {
     Uint32* pixels = surface->pixels;
     int len = surface->w * surface->h;
@@ -197,9 +249,55 @@ void filter_contrast(SDL_Surface* surface, int contrast)
         {
             Uint8 r, g, b;
             SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            r = (r - 128) * contrast / 100 + 128;
-            g = (g - 128) * contrast / 100 + 128;
-            b = (b - 128) * contrast / 100 + 128;
+            r = 128 + contrast * (r - 128);
+            g = 128 + contrast * (g - 128);
+            b = 128 + contrast * (b - 128);
+            pixels[i] = SDL_MapRGB(format, r, g, b);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}
+
+// brightness filter function
+void brightness_filter(SDL_Surface* surface, float brightness)
+{
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            Uint8 r, g, b;
+            SDL_GetRGB(pixels[i], format, &r, &g, &b);
+            r = r + brightness;
+            g = g + brightness;
+            b = b + brightness;
+            pixels[i] = SDL_MapRGB(format, r, g, b);
+        }
+        SDL_UnlockSurface(surface);
+    }
+}
+
+// gamma filter function
+void gamma_filter(SDL_Surface* surface, float gamma)
+{
+    Uint32* pixels = surface->pixels;
+    int len = surface->w * surface->h;
+    SDL_PixelFormat* format = surface->format;
+    if (SDL_LockSurface(surface) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    else
+    {
+        for (int i = 0; i < len; i++)
+        {
+            Uint8 r, g, b;
+            SDL_GetRGB(pixels[i], format, &r, &g, &b);
+            r = 255 * pow(r / 255, 1 / gamma);
+            g = 255 * pow(g / 255, 1 / gamma);
+            b = 255 * pow(b / 255, 1 / gamma);
             pixels[i] = SDL_MapRGB(format, r, g, b);
         }
         SDL_UnlockSurface(surface);
