@@ -233,10 +233,8 @@ void gaussian_smoothing(SDL_Surface* surface, int sigma, int kernel)
     }
 }
 
-
-
-// contrast filter function
-void contrast_filter(SDL_Surface* surface, float contrast)
+//contrast function
+void contrast(SDL_Surface* surface, int contrast)
 {
     Uint32* pixels = surface->pixels;
     int len = surface->w * surface->h;
@@ -249,36 +247,25 @@ void contrast_filter(SDL_Surface* surface, float contrast)
         {
             Uint8 r, g, b;
             SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            r = 128 + contrast * (r - 128);
-            g = 128 + contrast * (g - 128);
-            b = 128 + contrast * (b - 128);
+            double c=clamp (contrast,0,128);
+            r = clamp((259 * (c + 255) / 255 * (259 - c)) * (r - 128) + 128, 0, 255);
+            g = clamp((259 * (c + 255) / 255 * (259 - c)) * (g - 128) + 128, 0, 255);
+            b = clamp((259 * (c + 255) / 255 * (259 - c)) * (b - 128) + 128, 0, 255);
             pixels[i] = SDL_MapRGB(format, r, g, b);
         }
         SDL_UnlockSurface(surface);
     }
 }
 
-// brightness filter function
-void brightness_filter(SDL_Surface* surface, float brightness)
+//clamp function
+int clamp(int value, int min, int max)
 {
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    SDL_PixelFormat* format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    if (value < min)
+        return min;
+    else if (value > max)
+        return max;
     else
-    {
-        for (int i = 0; i < len; i++)
-        {
-            Uint8 r, g, b;
-            SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            r = r + brightness;
-            g = g + brightness;
-            b = b + brightness;
-            pixels[i] = SDL_MapRGB(format, r, g, b);
-        }
-        SDL_UnlockSurface(surface);
-    }
+        return value;
 }
 
 // gamma filter function
@@ -295,9 +282,10 @@ void gamma_filter(SDL_Surface* surface, float gamma)
         {
             Uint8 r, g, b;
             SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            r = 255 * pow(r / 255, 1 / gamma);
-            g = 255 * pow(g / 255, 1 / gamma);
-            b = 255 * pow(b / 255, 1 / gamma);
+            double r1 =gamma/128;
+            r = clamp(pow(r / 255, 1 / r1) *255, 0, 255);
+            g = clamp(pow(g / 255, 1 / r1) *255, 0, 255);
+            b = clamp(pow(b / 255, 1 / r1)*255, 0, 255);
             pixels[i] = SDL_MapRGB(format, r, g, b);
         }
         SDL_UnlockSurface(surface);

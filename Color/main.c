@@ -45,7 +45,8 @@ int main(int argc, char** argv)
     //filter_median(surface);
     //save_image(surface, "median.png");
     //surface_to_grayscale(surface);
-    gamma_filter(surface, 0.5);
+    gamma_filter(surface, 255);
+    contrast(surface, 128);
     gaussian_smoothing(surface, 1, 3);
     sauvola_tresholding(surface, 0.5, 128);
     save_image(surface, "ref.png");
