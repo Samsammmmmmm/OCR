@@ -10,6 +10,18 @@
 //
 // pixel_color: Color of the pixel to convert in the RGB format.
 // format: Format of the pixel used by the surface.
+
+//clamp function
+int clamp(int value)
+{
+    if (value < 0)
+        return 0;
+    else if (value > 255)
+        return 255;
+    else
+        return value;
+}
+
 Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
 {
     Uint8 r, g, b;
@@ -233,61 +245,87 @@ void gaussian_smoothing(SDL_Surface* surface, int sigma, int kernel)
     }
 }
 
-//contrast function
-void contrast(SDL_Surface* surface, int contrast)
+int image_pixel_average(SDL_Surface *surface)
 {
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    SDL_PixelFormat* format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    else
+    int sum_red = 0;
+    int sum_green = 0;
+    int sum_blue = 0;
+
+    for (int x = 0; x < surface->w; x++)
     {
-        for (int i = 0; i < len; i++)
+        for (int y = 0; y < surface->h; y++)
         {
-            Uint8 r, g, b;
-            SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            double c=clamp (contrast,0,128);
-            r = clamp((259 * (c + 255) / 255 * (259 - c)) * (r - 128) + 128, 0, 255);
-            g = clamp((259 * (c + 255) / 255 * (259 - c)) * (g - 128) + 128, 0, 255);
-            b = clamp((259 * (c + 255) / 255 * (259 - c)) * (b - 128) + 128, 0, 255);
-            pixels[i] = SDL_MapRGB(format, r, g, b);
+            uint32_t pixel =  get_pixel(surface, x , y);
+            uint8_t r, g, b;
+            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+            sum_blue += b;
+            sum_green += g;
+            sum_red += r;
         }
-        SDL_UnlockSurface(surface);
     }
+
+    int numberPixels = surface->h * surface->w;
+    SDL_UnlockSurface(surface);
+    return (sum_red / numberPixels + sum_green / numberPixels + sum_blue / numberPixels) / 3;
 }
 
-//clamp function
-int clamp(int value, int min, int max)
+uint8_t min(uint8_t r, uint8_t g, uint8_t b)
 {
-    if (value < min)
-        return min;
-    else if (value > max)
-        return max;
-    else
-        return value;
+    if (r < g)
+        if (r < b)
+            return r;
+    if (g < b)
+        return g;
+    return b;
+}
+
+//contrast function
+void contrast(SDL_Surface* surface)
+{
+    int c_value = image_pixel_average(surface);
+    int av = image_pixel_average(surface);
+
+    for (int x = 0; x < surface->w; x++)
+    {
+        for (int y = 0; y < surface->h; y++)
+        {
+            Uint8 r, g, b;
+            Uint32 pixel = get_pixel(surface, x, y);
+            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+
+            double factor = (259 * (c_value + 255)) / (255.0* (259.0 - c_value));
+
+            int new_red = clamp(factor * (r - av) + av);
+            int new_green = clamp(factor * (g - av) + av);
+            int new_blue = clamp(factor * (b - av) + av);
+            int mini = min(new_red, new_green, new_blue);
+
+            pixel = SDL_MapRGB(surface->format, mini, mini, mini);
+            put_pixel(surface, x, y, pixel);
+        }
+    }
+    SDL_UnlockSurface(surface);
 }
 
 // gamma filter function
-void gamma_filter(SDL_Surface* surface, float gamma)
+void gamma_filter(SDL_Surface* surface)
 {
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    SDL_PixelFormat* format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    else
+    float gamma_correction = 2.0f / (float) (255 - image_pixel_average(surface));
+
+    for (int x = 0; x < surface->w; x++)
     {
-        for (int i = 0; i < len; i++)
+        for (int y = 0; y < surface->h; y++)
         {
-            Uint8 r, g, b;
-            SDL_GetRGB(pixels[i], format, &r, &g, &b);
-            double r1 =gamma/128;
-            r = clamp(pow(r / 255, 1 / r1) *255, 0, 255);
-            g = clamp(pow(g / 255, 1 / r1) *255, 0, 255);
-            b = clamp(pow(b / 255, 1 / r1)*255, 0, 255);
-            pixels[i] = SDL_MapRGB(format, r, g, b);
+            uint32_t pixel = get_pixel(surface, x, y);
+            uint8_t r, g, b;
+            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+            int new_red = clamp(pow((float) (r / 255.0), gamma_correction) * 255.0f);
+            int new_green = clamp(pow((float) (g / 255.0), gamma_correction) * 255.0f);
+            int new_blue = clamp(pow((float) (b / 255.0), gamma_correction) * 255.0f);
+
+            pixel = SDL_MapRGB(surface->format, new_red, new_green, new_blue);
+            put_pixel(surface, x, y, pixel);
         }
-        SDL_UnlockSurface(surface);
     }
+    SDL_UnlockSurface(surface);
 }
