@@ -18,6 +18,7 @@ Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
     Uint8 average = 0.3 * r + 0.59 * g + 0.11 * b;
     Uint32 color = SDL_MapRGB(format, average, average, average);
     return color;
+}
 
 void surface_to_grayscale(SDL_Surface* surface)
 {
