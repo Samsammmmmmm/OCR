@@ -11,17 +11,6 @@
 // pixel_color: Color of the pixel to convert in the RGB format.
 // format: Format of the pixel used by the surface.
 
-//clamp function
-int clamp(int value)
-{
-    if (value < 0)
-        return 0;
-    else if (value > 255)
-        return 255;
-    else
-        return value;
-}
-
 Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
 {
     Uint8 r, g, b;
@@ -29,7 +18,6 @@ Uint32 pixel_to_grayscale(Uint32 pixel_color, SDL_PixelFormat* format)
     Uint8 average = 0.3 * r + 0.59 * g + 0.11 * b;
     Uint32 color = SDL_MapRGB(format, average, average, average);
     return color;
-}
 
 void surface_to_grayscale(SDL_Surface* surface)
 {
@@ -243,40 +231,6 @@ void gaussian_smoothing(SDL_Surface* surface, int sigma, int kernel)
         }
         SDL_UnlockSurface(surface);
     }
-}
-
-int image_pixel_average(SDL_Surface *surface)
-{
-    int sum_red = 0;
-    int sum_green = 0;
-    int sum_blue = 0;
-
-    for (int x = 0; x < surface->w; x++)
-    {
-        for (int y = 0; y < surface->h; y++)
-        {
-            uint32_t pixel =  get_pixel(surface, x , y);
-            uint8_t r, g, b;
-            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
-            sum_blue += b;
-            sum_green += g;
-            sum_red += r;
-        }
-    }
-
-    int numberPixels = surface->h * surface->w;
-    SDL_UnlockSurface(surface);
-    return (sum_red / numberPixels + sum_green / numberPixels + sum_blue / numberPixels) / 3;
-}
-
-uint8_t min(uint8_t r, uint8_t g, uint8_t b)
-{
-    if (r < g)
-        if (r < b)
-            return r;
-    if (g < b)
-        return g;
-    return b;
 }
 
 //contrast function

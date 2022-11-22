@@ -136,3 +136,48 @@ void print_pic(SDL_Renderer* renderer,SDL_Texture* texture )
         }
     }
 }
+
+// clamp function
+int clamp(int value)
+{
+    if (value < 0)
+        return 0;
+    else if (value > 255)
+        return 255;
+    else
+        return value;
+}
+
+int image_pixel_average(SDL_Surface *surface)
+{
+    int sum_red = 0;
+    int sum_green = 0;
+    int sum_blue = 0;
+
+    for (int x = 0; x < surface->w; x++)
+    {
+        for (int y = 0; y < surface->h; y++)
+        {
+            uint32_t pixel = get_pixel(surface, x, y);
+            uint8_t r, g, b;
+            SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+            sum_blue += b;
+            sum_green += g;
+            sum_red += r;
+        }
+    }
+
+    int numberPixels = surface->h * surface->w;
+    SDL_UnlockSurface(surface);
+    return (sum_red / numberPixels + sum_green / numberPixels + sum_blue / numberPixels) / 3;
+}
+
+uint8_t min(uint8_t r, uint8_t g, uint8_t b)
+{
+    if (r < g)
+        if (r < b)
+            return r;
+    if (g < b)
+        return g;
+    return b;
+}

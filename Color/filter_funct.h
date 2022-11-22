@@ -12,7 +12,6 @@ void sauvola_tresholding(SDL_Surface *surface, int radius, float k);
 void median_filter(SDL_Surface *surface, int radius);
 void gaussian_smoothing(SDL_Surface *surface, int sigma, int kernel);
 void contrast(SDL_Surface *surface);
-int clamp(int value, int min, int max);
 void gamma_filter(SDL_Surface *surface);
 
 #endif
