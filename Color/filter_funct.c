@@ -327,3 +327,40 @@ void gamma_filter(SDL_Surface* surface)
     }
     SDL_UnlockSurface(surface);
 }
+
+//sobel filter function
+void sobel_filter(SDL_Surface* surface)
+{
+    int kernel_x[3][3] = { { -1, 0, 1 }, { -2, 0, 2 }, { -1, 0, 1 } };
+    int kernel_y[3][3] = { { -1, -2, -1 }, { 0, 0, 0 }, { 1, 2, 1 } };
+
+    for (int x = 0; x < surface->w; x++)
+    {
+        for (int y = 0; y < surface->h; y++)
+        {
+            int sum_x = 0;
+            int sum_y = 0;
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (x + i >= 0 && x + i < surface->w && y + j >= 0 && y + j < surface->h)
+                    {
+                        Uint8 r, g, b;
+                        SDL_GetRGB(get_pixel(surface, x + i, y + j), surface->format, &r, &g, &b);
+                        sum_x += r * kernel_x[i + 1][j + 1];
+                        sum_y += r * kernel_y[i + 1][j + 1];
+                    }
+                }
+            }
+            int new_red = clamp(sqrt(pow(sum_x, 2) + pow(sum_y, 2)));
+            int new_green = clamp(sqrt(pow(sum_x, 2) + pow(sum_y, 2)));
+            int new_blue = clamp(sqrt(pow(sum_x, 2) + pow(sum_y, 2)));
+            int mini = min(new_red, new_green, new_blue);
+
+            Uint32 pixel = SDL_MapRGB(surface->format, mini, mini, mini);
+            put_pixel(surface, x, y, pixel);
+        }
+    }
+    SDL_UnlockSurface(surface);
+}
