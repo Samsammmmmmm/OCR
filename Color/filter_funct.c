@@ -143,8 +143,50 @@ void sauvola_tresholding(SDL_Surface* surface, int radius, float k)
     }
 }
 
+void InsertionSort(Uint32 window[])
+{
+    int i, j;
+    Uint32 temp;
+    for (i = 0; i < 25; i++)
+    {
+        temp = window[i];
+
+        for (j = i - 1; j >= 0 && temp < window[j] ; j--)
+            window[j + 1] = window[j];
+
+        window[j + 1] = temp;
+    }
+}
+
+void median_filter(SDL_Surface *surface)
+{
+    int width = surface->w;
+    int height = surface->h;
+
+    Uint32 window[25];
+
+    for (int x = 1; x < width - 1; x++)
+    {
+        for (int y = 1; y < height - 1; y++)
+        {
+            window[0] = get_pixel(surface, x - 1, y - 1);
+            window[1] = get_pixel(surface, x, y - 1);
+            window[2] = get_pixel(surface, x + 1, y - 1);
+            window[3] = get_pixel(surface, x - 1, y);
+            window[4] = get_pixel(surface, x, y);
+            window[5] = get_pixel(surface, x + 1, y);
+            window[6] = get_pixel(surface, x - 1, y + 1);
+            window[7] = get_pixel(surface, x, y + 1);
+            window[8] = get_pixel(surface, x + 1, y + 1);
+
+            InsertionSort(window);
+
+            put_pixel(surface, x, y, window[4]);
+        }
+    }
+}
 // median filter function
-void median_filter(SDL_Surface* surface, int radius)
+/*void median_filter(SDL_Surface* surface, int radius)
 {
     Uint32* pixels = surface->pixels;
     int len = surface->w * surface->h;
@@ -195,6 +237,7 @@ void median_filter(SDL_Surface* surface, int radius)
         SDL_UnlockSurface(surface);
     }
 }
+*/
 
 // gaussian smoothing function
 void gaussian_smoothing(SDL_Surface* surface, int sigma, int kernel)
