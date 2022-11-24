@@ -40,22 +40,15 @@ int main(int argc, char** argv)
     SDL_SetWindowSize(window, surface->w, surface->h);
 
     // - Convert the surface into black and white.
-    //filter_contrast(surface);
-    //save_image(surface, "contrast.png");
-    //filter_median(surface);
-    //save_image(surface, "median.png");
-    //surface_to_grayscale(surface);
     gamma_filter(surface);
     save_image(surface, "gamma.png");
     contrast(surface);
     save_image(surface, "contrast.png");
+    //surface_to_grayscale(surface);
     otsu_tresholding(surface);
     save_image(surface, "ref.png");
-    gaussian_smoothing(surface, 1, 3);
-    save_image(surface, "gaussian.png");
-    //median_filter(surface, )
-    //save_image(surface, "median.png");
-
+    median_filter(surface);
+    save_image(surface, "median.png");
     // - Create a new texture from the grayscale surface.
     SDL_Texture* result=SDL_CreateTextureFromSurface(renderer, surface);
     
