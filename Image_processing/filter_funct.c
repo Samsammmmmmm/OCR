@@ -225,43 +225,6 @@ void median_filter(SDL_Surface *surface)
 }
 */
 
-// gaussian smoothing function
-void gaussian_smoothing(SDL_Surface* surface, int sigma, int kernel)
-{
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    SDL_PixelFormat* format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    else
-    {
-        for (int i = 0; i < len; i++)
-        {
-            int x = i % surface->w;
-            int y = i / surface->w;
-            int r = 0;
-            int g = 0;
-            int b = 0;
-            int count = 0;
-            for (int j = -kernel; j <= kernel; j++)
-            {
-                for (int k = -kernel; k <= kernel; k++)
-                {
-                    if (x + j >= 0 && x + j < surface->w && y + k >= 0 && y + k < surface->h)
-                    {
-                        Uint8 r1, g1, b1;
-                        SDL_GetRGB(pixels[(y + k) * surface->w + (x + j)], format, &r1, &g1, &b1);
-                        r += r1 * exp(-(pow(j, 2) + pow(k, 2)) / (2 * pow(sigma, 2)));
-                        count++;
-                    }
-                }
-            }
-            pixels[i] = SDL_MapRGB(format, r / count, r / count, r / count);
-        }
-        SDL_UnlockSurface(surface);
-    }
-}
-
 //contrast function
 void contrast(SDL_Surface* surface)
 {
