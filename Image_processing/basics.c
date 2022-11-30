@@ -168,7 +168,7 @@ int image_pixel_average(SDL_Surface *surface)
     }
     int numberPixels = surface->h * surface->w;
     SDL_UnlockSurface(surface);
-    return (sum_red / numberPixels + sum_green / numberPixels + sum_blue / numberPixels) / 3;
+    return (sum_r / numberPixels + sum_g / numberPixels + sum_b / numberPixels) / 3;
 }
 
 //return min color
