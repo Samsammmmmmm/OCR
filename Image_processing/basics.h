@@ -15,6 +15,8 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 int *surface_to_histogram(SDL_Surface *surface);
 void print_pic(SDL_Renderer* renderer,SDL_Texture* texture );
 int clamp(int value, int min, int max);
-uint8_t min(uint8_t r, uint8_t g, uint8_t b);
+uint8_t min_color(uint8_t r, uint8_t g, uint8_t b);
 int image_pixel_average(SDL_Surface *surface);
+void InsertSort(Uint32 window[]);
+
 #endif
