@@ -70,11 +70,11 @@ void initialize_weights(network *_network)
             {
                 _network->layers[layers_nb].neurons[neurons_nb].
                     weights[weights_nb] = 
-                    ((double)rand() / (double)RAND_MAX);
+                    ((double)rand() / RAND_MAX * 2.0 - 1.0);
             }
 
             _network->layers[layers_nb].neurons[neurons_nb].bias = 
-                ((double)rand() / (double)RAND_MAX);
+                ((double)rand() / RAND_MAX * 2.0 - 1.0);
         }
     }
 }
