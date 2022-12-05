@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "basics.h"
-#include <limits.h>
 
 SDL_Surface* load_image(const char* path)
 {
@@ -150,9 +149,9 @@ int clamp(int value)
 
 int image_pixel_average(SDL_Surface *surface)
 {
-    int sum_red = 0;
-    int sum_green = 0;
-    int sum_blue = 0;
+    int sum_r = 0;
+    int sum_g = 0;
+    int sum_b = 0;
 
     for (int x = 0; x < surface->w; x++)
     {
@@ -161,18 +160,18 @@ int image_pixel_average(SDL_Surface *surface)
             uint32_t pixel = get_pixel(surface, x, y);
             uint8_t r, g, b;
             SDL_GetRGB(pixel, surface->format, &r, &g, &b);
-            sum_blue += b;
-            sum_green += g;
-            sum_red += r;
+            sum_b += b;
+            sum_g += g;
+            sum_r += r;
         }
     }
-
     int numberPixels = surface->h * surface->w;
     SDL_UnlockSurface(surface);
-    return (sum_red / numberPixels + sum_green / numberPixels + sum_blue / numberPixels) / 3;
+    return (sum_r / numberPixels + sum_g / numberPixels + sum_b / numberPixels) / 3;
 }
 
-uint8_t min(uint8_t r, uint8_t g, uint8_t b)
+//return min color
+uint8_t min_color(uint8_t r, uint8_t g, uint8_t b)
 {
     if (r < g)
         if (r < b)
@@ -180,4 +179,17 @@ uint8_t min(uint8_t r, uint8_t g, uint8_t b)
     if (g < b)
         return g;
     return b;
+}
+
+void InsertSort(Uint32 window[])
+{
+    int i, j;
+    Uint32 temp;
+    for (i = 0; i < 25; i++)
+    {
+        temp = window[i];
+        for (j = i - 1; j >= 0 && temp < window[j]; j--)
+            window[j + 1] = window[j];
+        window[j + 1] = temp;
+    }
 }
