@@ -31,16 +31,16 @@ void save_image(SDL_Surface *image, char *path)
 // - get the pixel color at (x, y)
 Uint32 get_pixel(SDL_Surface *surface, int x, int y)
 {
-    int bpp = surface->format->BytesPerPixel;
-    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
-    switch (bpp)
-    {
+    Uint8 bytePerPixel = surface->format->BytesPerPixel;
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bytePerPixel;
+
+    switch(bytePerPixel){
     case 1:
         return *p;
     case 2:
         return *(Uint16 *)p;
     case 3:
-        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
             return p[0] << 16 | p[1] << 8 | p[2];
         else
             return p[0] | p[1] << 8 | p[2] << 16;
@@ -154,6 +154,9 @@ void event_loop(SDL_Renderer* renderer, SDL_Texture* texture, double angle_para)
       draw(renderer, texture, angle);*/
 }
 
+int IsPixelInImage(SDL_Surface *surface, int x, int y){
+    return 0 <= x && x < surface->w && 0 <= y && y < surface->h;
+}
 // pixel_color: Color of the pixel to convert in the RGB format.
 // format: Format of the pixel used by the surface.
 
@@ -161,8 +164,8 @@ SDL_Surface *manual_rota(SDL_Surface *surface, int angle)
 {
     angle = angle % (angle > 0 ? 360 : -360);
     double radian = PI * angle / 180;
-    int height = abs(surface->h * cos(radian) + surface->w * sin(radian));
-    int width = abs(surface->h * sin(radian) + surface->w * cos(radian));;
+    int height = abs((int)(surface->h * cos(radian) + surface->w * sin(radian)));
+    int width = abs((int)(surface->h * sin(radian) + surface->w * cos(radian)));;
     SDL_Surface *rotated = SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
     int axis_y = height / 2;
     int axis_x = width / 2;
@@ -174,7 +177,7 @@ SDL_Surface *manual_rota(SDL_Surface *surface, int angle)
                 + (x - axis_x) * cos(radian) + surface->w / 2;
             int v =(int) (y - axis_y) * cos(radian)
                 + (x - axis_x) * -sin(radian) + surface->h / 2;
-            if(0 <= x && x < surface->w && 0 <= y && y < surface->h)
+            if(IsPixelInImage(surface, h, v))
                 put_pixel(rotated, x, y, get_pixel(surface, h, v));
             else
                 put_pixel(rotated, x, y, 0x00000000);
@@ -237,3 +240,4 @@ int main(int argc, char** argv)
     
     return EXIT_SUCCESS;
 }
+
