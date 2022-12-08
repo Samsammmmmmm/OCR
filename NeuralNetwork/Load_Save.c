@@ -1,8 +1,17 @@
 #include "Load_Save.h"
+#include <time.h>
 
 void save(network *_network)
 {
-    FILE *file = fopen("weights.txt", "w+");
+    char filename[255];
+    struct tm* tm;
+    time_t now;
+    now = time(0); // get current time
+    tm = localtime(&now); // get structure
+    sprintf(filename, "Weights/weights_%02d%02d%04d_%02d%02d%02d.txt", tm->tm_mon+1,
+            tm->tm_mday, tm->tm_year+1900, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+    FILE *file = fopen(filename, "w+");
     
     fprintf(file, "%d\n", _network->size_input);
     fprintf(file, "%d\n", _network->size_hidden);
