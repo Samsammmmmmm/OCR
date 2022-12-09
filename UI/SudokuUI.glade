@@ -42,14 +42,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="button_start">
-            <property name="label" translatable="yes">Start</property>
+          <object class="GtkButton" id="button_solve">
+            <property name="label" translatable="yes">Solve</property>
             <property name="width-request">121</property>
             <property name="height-request">44</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <signal name="clicked" handler="on_button_start_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="x">900</property>
@@ -76,7 +75,6 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="title" translatable="yes"/>
-            <signal name="file-set" handler="on_file_set" swapped="no"/>
           </object>
           <packing>
             <property name="x">23</property>
