@@ -204,3 +204,18 @@ void gradient_descent(network *_network, double eta)
         }
     }
 }
+
+void network_free(network *_network)
+{
+    for (int layers_nb = 0; layers_nb < _network->number_layers; layers_nb++)
+    {
+        for (int neurons_nb = 0; neurons_nb < _network->layers[layers_nb].number_neurons; neurons_nb++)
+        {
+            free(_network->layers[layers_nb].neurons[neurons_nb].weights);
+        }
+        if (layers_nb < _network->number_layers - 1) {
+            free(_network->layers[layers_nb].neurons);
+        }
+    }
+    free(_network->layers);
+}

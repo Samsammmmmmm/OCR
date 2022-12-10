@@ -29,3 +29,5 @@ void forward_prop(network *_network, double inputs[]);
 void back_prop(network *_network, double desired_ouputs[]);
 
 void gradient_descent(network *_network, double eta);
+
+void network_free(network *_network);
