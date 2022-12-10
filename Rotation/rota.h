@@ -1,3 +1,6 @@
+#ifndef ROTA_H
+#include ROTA_H
+
 #include <err.h>
 /*#include </opt/homebrew/include/SDL2/SDL.h>
   #include </opt/homebrew/Cellar/sdl2_image/2.6.2/include/SDL2/SDL_image.h>*/
@@ -14,4 +17,10 @@ void event_loop(SDL_Renderer* renderer, SDL_Texture* texture, double angle_p);
 
 SDL_Surface* load_image(const char* path);
 
-int main(int argc, char** argv);
+int IsPixelInImage(SDL_Surface *surface, int x, int y);
+
+SDL_Surface *manual_rota(SDL_Surface *surface, int angle);
+
+int main(int argc, char **argv);
+
+#endif
