@@ -56,7 +56,6 @@ Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y)
 
 void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel)
 {
-	//remettre un pixel
 	Uint8 *p = pixel_ref(surface, x, y);
 
 	switch(surface->format->BytesPerPixel)
@@ -103,13 +102,14 @@ SDL_Surface* block_resize(SDL_Surface *block, int pix_w, int pix_h)
 
 void setlines(SDL_Surface *image, int *x, int *y)
 {
-	Uint32 pixel = SDL_MapRGB(image->format, 255, 62, 181);
+	Uint32 pixel = SDL_MapRGB(image->format, 255, 0, 0);
 	for(int i = 0; i < 10; i++)
 	{
 		int xx = y[i];
 		for(int j = 0; j < image->w;j++)
 		{
-			put_pixel(image,j,xx,pixel);
+		  for(int k = i; k<i+3 && k < image->w; k++)
+		    {put_pixel(image,j,xx+k,pixel);}
 		}
 	}
 	for(int i = 0; i < 10; i++)
@@ -117,7 +117,8 @@ void setlines(SDL_Surface *image, int *x, int *y)
 		int xx = x[i];
 		for(int j = 0; j < image->h;j++)
 		{
-			put_pixel(image,xx,j,pixel);
+		  for(int l = i; l<i+3 && l < image->h; l++)
+		    {put_pixel(image,xx+l,j,pixel);}
 		}
 	}
 }
@@ -224,8 +225,15 @@ void segmentation(SDL_Surface *image, SDL_Surface* image2)
 
 	qsort(x,10,sizeof(int),compare_function);
 	qsort(y,10,sizeof(int),compare_function);
-	setlines(image,x,y);
-	SDL_SaveBMP(image, "../BMP/test.bmp");
+	setlines(image2,x,y);
+	/*char buffer[100];
+	  snprintf(buffer, sizeof(buffer), "../BMP/test.bmp");
+	if (SDL_SaveBMP(image2, buffer) != 0)
+	  {
+	    printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
+
+	    }*/
+	IMG_SaveJPG(image2, "../BMP/detection.jpg", 80);
 	int cpt = 1;
 	for(int i = 0; i < 9; i++)
 	{
