@@ -73,7 +73,7 @@ double* to_array(SDL_Surface* surface)
     }
 }
 
-int is_white(SDL_Surface* surface)
+int is_black(SDL_Surface* surface)
 {
     return 0;
 }
@@ -110,7 +110,7 @@ void create_file_to_solve(char* weights_path)
             sprintf(path, "../Grid/1.bmp");
             if (j == 3 || j == 6)
                 fprintf(to_solve, " ");
-            if (is_white(SDL_LoadBMP(path)))
+            if (is_black(SDL_LoadBMP(path)))
             {
                 fprintf(to_solve, ".");
             }
@@ -135,7 +135,7 @@ void create_file_to_solve(char* weights_path)
 
 void test()
 {
-    network _neural = load("Weights/weights_12102022_193553.txt");
+    network _neural = load("Weights/weights_12072022_013155.txt");
     network *_network = &_neural;
 
 
@@ -164,7 +164,7 @@ void test()
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp == 255 ? 1 : 0;
+            p[j] = temp > 128 ? 1 : 0;
         }
 
 
@@ -185,26 +185,41 @@ void test()
     printf("%d on 29900", ok);
 }
 
-void train(int cpt)
+void train(char* path)
 {
+    //init network
     network _neural;
     network *_network = &_neural;
     *_network = create_network(784, 16, 9, 3);
     initialize_weights(_network);
 
-    FILE *file = fopen("Dataset/oui.txt", "r");
+    FILE *file = fopen(path, "r");
 
     if (file == NULL)
     {
         errx(EXIT_FAILURE, "Dataset file does not exist");
     }
-    
-    int *desired_ouputs = malloc(cpt * sizeof(int));
-    double **inputs = malloc(cpt * sizeof(double*));
+
+    //get number of lines
+    int lines = 0;
+    while(!feof(file))
+    {
+        int ch = fgetc(file);
+        if(ch == '\n')
+        {
+            lines++;
+        }
+    }
+    lines = lines / 785;
+    fclose(file);
+
+    file = fopen(path, "r");
+    int *desired_ouputs = malloc(lines * sizeof(int));
+    double **inputs = malloc(lines * sizeof(double*));
 
     char *line = NULL;
     size_t length = 0;
-    for (size_t i = 0; i < cpt; i++)
+    for (size_t i = 0; i < lines; i++)
     {
         double *p = malloc(784 * sizeof(double));
 
@@ -231,6 +246,7 @@ void train(int cpt)
     fclose(file);
 
 
+    //trains the network
    for (int epoch = 0; epoch < 200; epoch++)
     {
         for (int input_nb = 0; input_nb < 29900; input_nb++)
@@ -245,90 +261,9 @@ void train(int cpt)
     save(_network);
 }
 
-void train2()
+int main(int argc, char** argv)
 {
-    /*
-    network _neural;
-    network *_network = &_neural;
-    *_network = create_network(784, 16, 9, 3);
-    initialize_weights(_network);
-    */
-
-    FILE *file = fopen("Dataset/non.txt", "w+");
-
-    FILE *fp;
-    char row[5000];
-    char *token;
-    fp = fopen("Dataset/TMNIST.csv","r");
-
-    if (fp == NULL)
-    {
-        errx(EXIT_FAILURE, "Dataset file does not exist");
-    }
-
-    int *desired_ouputs = malloc(29900 * sizeof(int));
-    double **inputs = malloc(29900 * sizeof(double*));
-
-    int cpt = 0;
-    while (feof(fp) != true)
-    {
-        fgets(row, 5000, fp);
-
-        token = strtok(row, ",");
-
-        double output = atof(token);
-        double *p = malloc(784 * sizeof(double));
-
-        int i = 0;
-        while (token != NULL)
-        {
-            double temp = atof(token);
-            p[i] = temp == 255 ? 1 : 0;
-            token = strtok(NULL, ",");
-            if (cpt != 0)
-                fprintf(file, "%f\n", temp);
-            i++;
-        }
-
-        if (cpt != 0)
-        {
-            desired_ouputs[cpt - 1] = output;
-            inputs[cpt - 1] = p;
-        }
-
-        cpt++;
-    }
-
-    fclose(fp);
-    fclose(file);
-    /*
-    for (int epoch = 0; epoch < 200; epoch++)
-    {
-        for (int input_nb = 0; input_nb < 29900; input_nb++)
-        {
-            printf("Epoch n°:%d -- Input n°:%d\n", epoch + 1, input_nb + 1);
-            forward_prop(_network, inputs[input_nb]);
-            back_prop(_network, get_desired_ouputs(desired_ouputs[input_nb]));
-            gradient_descent(_network, 0.01);
-        }
-    }
-
-    save(_network);
-
-    free(desired_ouputs);
-    free(inputs);
-    network_free(_network);
-     */
-    train(cpt - 1);
-}
-
-
-int main(int argc, char** argv){
-    if (argc == 1)
-    {
-        train2();
-    }
-    else if (argc == 2)
+    if (argc == 2)
     {
         test();
     }
@@ -336,7 +271,7 @@ int main(int argc, char** argv){
     {
         if (*argv[1] == '1')
         {
-            train(29900);
+            train("Dataset/oui.txt");
         }
         else if (*argv[1] == '0')
         {
