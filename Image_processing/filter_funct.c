@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <err.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <pthread.h>
-#include "basics.h"
-#include <math.h>
+#include "filter_funct.h"
 
 // Converts a colored pixel into grayscale tyhen in black and white.
 // surface: surface to transform
