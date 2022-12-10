@@ -97,7 +97,7 @@
           </object>
           <packing>
             <property name="x">384</property>
-            <property name="y">624</property>
+            <property name="y">617</property>
           </packing>
         </child>
         <child>
@@ -152,6 +152,45 @@
           <packing>
             <property name="x">82</property>
             <property name="y">394</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_pretreatment">
+            <property name="label" translatable="yes">pretreatment</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="y">616</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_lignes_detec">
+            <property name="label" translatable="yes">lignes_detection</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="y">627</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label" translatable="yes">button</property>
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="y">622</property>
           </packing>
         </child>
       </object>
