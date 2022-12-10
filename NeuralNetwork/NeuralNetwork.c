@@ -60,6 +60,7 @@ int number_layers)
 
 void initialize_weights(network *_network)
 {
+    //initialize weights and biases with random values
     for (int layers_nb = 0; layers_nb < _network->number_layers; layers_nb++)
     {
         for (int neurons_nb = 0; neurons_nb < 
@@ -118,22 +119,7 @@ void forward_prop(network *_network, double inputs[])
             {
                 _network->layers[layers_nb].neurons[neurons_nb].activation =
                     relu(_network->layers[layers_nb].neurons[neurons_nb].z);
-                //if (_network->layers[layers_nb].neurons[neurons_nb].z > 0)
-                //{
-                //    _network->layers[layers_nb].neurons[neurons_nb].activation =
-                //        _network->layers[layers_nb].neurons[neurons_nb].z;
-                //}
-                //else
-                //{
-                //    _network->layers[layers_nb].neurons[neurons_nb].activation =
-                //        0;
-                //}
             }
-            //else
-            //{
-            //    _network->layers[layers_nb].neurons[neurons_nb].activation = 
-            //        _network->layers[layers_nb].neurons[neurons_nb].z;
-            //}
         }
     }
     
