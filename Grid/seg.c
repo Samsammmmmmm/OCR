@@ -8,7 +8,7 @@ void init_sdl()
 		errx(1,"Could not initialize SDL: %s.\n", SDL_GetError());
 }
 
-SDL_Surface* load_image(char *path)
+SDL_Surface* load_image2(char *path)
 {
 	SDL_Surface *img;
 
@@ -28,7 +28,7 @@ Uint8* pixel_ref(SDL_Surface *surf, unsigned x, unsigned y)
 	return (Uint8*)surf->pixels + y * surf->pitch + x * bpp;
 }
 
-Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y)
+Uint32 get_pixel2(SDL_Surface *surface, unsigned x, unsigned y)
 {
 	//set les pixels a l'aide de pixel_ref
 	Uint8 *p = pixel_ref(surface, x, y);
@@ -54,7 +54,7 @@ Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y)
 	return 0;
 }
 
-void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel)
+void put_pixel2(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel)
 {
 	Uint8 *p = pixel_ref(surface, x, y);
 
@@ -109,7 +109,7 @@ void setlines(SDL_Surface *image, int *x, int *y)
 		for(int j = 0; j < image->w;j++)
 		{
 		  for(int k = i; k<i+3 && k < image->w; k++)
-		    {put_pixel(image,j,xx+k,pixel);}
+		    {put_pixel2(image,j,xx+k,pixel);}
 		}
 	}
 	for(int i = 0; i < 10; i++)
@@ -118,7 +118,7 @@ void setlines(SDL_Surface *image, int *x, int *y)
 		for(int j = 0; j < image->h;j++)
 		{
 		  for(int l = i; l<i+3 && l < image->h; l++)
-		    {put_pixel(image,xx+l,j,pixel);}
+		    {put_pixel2(image,xx+l,j,pixel);}
 		}
 	}
 }
@@ -140,7 +140,7 @@ void getlines(SDL_Surface *image, int *x, int *y)
 	{
 		for(int x = 0; x < width ; x++)
 		{
-			Uint32 pixel = get_pixel(image,x,y);
+			Uint32 pixel = get_pixel2(image,x,y);
 			Uint8 r,g,b;
 			SDL_GetRGB(pixel, image->format, &(r), &(g), &(b));
 			if((r<150)&(g<150)&(b<150))
@@ -154,7 +154,7 @@ void getlines(SDL_Surface *image, int *x, int *y)
 	{
 		for(int y = 0; y < height; y++)
 		{
-			Uint32 pixel = get_pixel(image,x,y);
+			Uint32 pixel = get_pixel2(image,x,y);
 			Uint8 r,g,b;
 			SDL_GetRGB(pixel, image->format, &(r), &(g), &(b));
 			if((r<150)&(g<150)&(b<150))
@@ -294,8 +294,8 @@ int main(int argc, char **argv)
 	if (renderer == NULL)
         errx(EXIT_FAILURE, "%s", SDL_GetError());*/
 	
-	SDL_Surface* image_surface = load_image(argv[1]);
-	SDL_Surface* image_filtered = load_image(argv[2]);
+	SDL_Surface* image_surface = load_image2(argv[1]);
+	SDL_Surface* image_filtered = load_image2(argv[2]);
 	
 	segmentation(image_surface, image_filtered);
 
