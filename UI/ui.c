@@ -64,7 +64,7 @@ void on_button_solve_clicked(GtkButton *button)
     
     //takes the solved grid in the files and displays it
     
-    //update_image((GtkContainer*) fixed, filename + .result, (GtkWidget*) grid);
+    update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     
     //change the step label
     gtk_label_set_label((GtkLabel*)label_step, "step in progress : grid solved\n");
@@ -76,7 +76,7 @@ void on_button_solve_clicked(GtkButton *button)
 void on_button_save_clicked(GtkButton *button)
 {
     SDL_Surface* solved_surface;
-    gchar* fileresult = "starting_grid2.png"; // put the name of the solved grid
+    gchar* fileresult = "../Graphics/load.png"; // put the name of the solved grid
     solved_surface = IMG_Load(fileresult);
     if (SDL_SaveBMP(solved_surface, "results/result.bmp") != 0)
     {
