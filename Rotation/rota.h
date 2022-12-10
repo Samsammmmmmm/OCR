@@ -1,5 +1,5 @@
 #ifndef ROTA_H
-#include ROTA_H
+#define ROTA_H
 
 #include <err.h>
 /*#include </opt/homebrew/include/SDL2/SDL.h>

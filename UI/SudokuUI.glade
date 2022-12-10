@@ -22,7 +22,7 @@
             <property name="pixbuf">starting_grid2.png</property>
           </object>
           <packing>
-            <property name="x">278</property>
+            <property name="x">292</property>
             <property name="y">80</property>
           </packing>
         </child>
@@ -97,7 +97,7 @@
           </object>
           <packing>
             <property name="x">384</property>
-            <property name="y">624</property>
+            <property name="y">617</property>
           </packing>
         </child>
         <child>
@@ -152,6 +152,62 @@
           <packing>
             <property name="x">82</property>
             <property name="y">394</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_pretreatment">
+            <property name="label" translatable="yes">pretreatment</property>
+            <property name="width-request">140</property>
+            <property name="height-request">40</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">404</property>
+            <property name="y">659</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_lignesdetec">
+            <property name="label" translatable="yes">lignes_detection</property>
+            <property name="width-request">100</property>
+            <property name="height-request">40</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">566</property>
+            <property name="y">659</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_startergrid">
+            <property name="label" translatable="yes">starter grid</property>
+            <property name="width-request">140</property>
+            <property name="height-request">40</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">242</property>
+            <property name="y">659</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_solved">
+            <property name="label" translatable="yes">solved grid</property>
+            <property name="width-request">131</property>
+            <property name="height-request">40</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">730</property>
+            <property name="y">660</property>
           </packing>
         </child>
       </object>

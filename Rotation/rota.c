@@ -1,7 +1,7 @@
 #include "rota.h"
 
 #define PI M_PI
-
+/*
 SDL_Surface* load_image(const char* path)
 {
     //load image
@@ -84,7 +84,7 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
         break;
     }
 }
-
+*/
 // Updates the display.
 //
 // renderer: Renderer to draw on.
@@ -187,7 +187,7 @@ SDL_Surface *manual_rota(SDL_Surface *surface, int angle)
     return rotated;
 }
 
-int main(int argc, char** argv)
+int main2(int argc, char** argv)
 {
     // Checks the number of arguments.
     if (argc != 2 && argc != 3)

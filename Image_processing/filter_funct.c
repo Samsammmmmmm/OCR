@@ -171,7 +171,6 @@ void median_filter(SDL_Surface *surface)
 void contrast(SDL_Surface* surface)
 {
     int c_value = image_pixel_average(surface);
-    int av = image_pixel_average(surface);
     for (int x = 0; x < surface->w; x++)
     {
         for (int y = 0; y < surface->h; y++)
@@ -180,9 +179,9 @@ void contrast(SDL_Surface* surface)
             Uint32 pixel = get_pixel(surface, x, y);
             SDL_GetRGB(pixel, surface->format, &r, &g, &b);
             double factor = (259 * (c_value + 255)) / (255.0* (259.0 - c_value));
-            int new_r = clamp(factor * (r - av) + av);
-            int new_g = clamp(factor * (g - av) + av);
-            int new_b = clamp(factor * (b - av) + av);
+            int new_r = clamp(factor * (r - 128) + 128);
+            int new_g = clamp(factor * (g - 128) + 128);
+            int new_b = clamp(factor * (b - 128) + 128);
             int min = min_color(new_r, new_g, new_b);
             pixel = SDL_MapRGB(surface->format, min, min, min);
             put_pixel(surface, x, y, pixel);
@@ -249,4 +248,38 @@ void sobel_filter(SDL_Surface* surface)
         }
     }
     SDL_UnlockSurface(surface);
+}
+
+
+int img_process(gchar* filename)
+{
+    SDL_Surface* surface = load_image(filename);
+    if (surface == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    //copy surface existing
+    SDL_Surface* detect_ligns = load_image(filename);
+    if (detect_ligns == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    
+    // - Do the processing.
+    
+    gamma_filter(surface);
+    contrast(surface);
+    otsu_tresholding(surface);
+    median_filter(surface);
+    save_image(surface, "../BMP/result.png");
+
+    gamma_filter(detect_ligns);
+    contrast(detect_ligns);
+    otsu_tresholding(detect_ligns);
+    sobel_filter(detect_ligns);
+    save_image(detect_ligns, "../BMP/ligns.png");
+
+  
+    // - Free the surface.
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(detect_ligns);
+    
+    return EXIT_SUCCESS;
 }
