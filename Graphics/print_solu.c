@@ -204,16 +204,9 @@ void image_result(SDL_Surface* grid, char file01[], char file02[])
     }
 }
 
-
-int main(int argc, char** argv)
+void image_result(char file01[], char file02[])
 {
-    // Checks the number of arguments.
-    if (argc != 2 && argc != 3)
-        errx(EXIT_FAILURE, "image file");
-     // Initializes the SDL.
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
     SDL_Surface* load=load_image("empty_grid.png");
-    image_result(load, argv[1], argv[2]);
+    image_result(load, file01, file02);
     save_image(load, "load.png");
 }
