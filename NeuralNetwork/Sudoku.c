@@ -37,10 +37,11 @@ double* get_desired_ouputs(int x)
 
 double get_color(Uint32 pixel_color, SDL_PixelFormat* format)
 {
+    SDL_Color rgb;
     Uint8 r, g, b;
-    SDL_GetRGB(pixel_color, format, &r, &g, &b);
+    SDL_GetRGB(pixel_color, format, &rgb.r, &rgb.g, &rgb.b);
     int color;
-    if(r + g + b > 128)
+    if(rgb.r == 255)
         color = 1.0;
     else
         color = 0.0;
@@ -57,11 +58,17 @@ double* to_array(SDL_Surface* surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     else
     {
+        int cpt = 0;
         for (int i = 0; i < len; i++)
         {
-            array[i] = get_color(pixels[i], format);
+            int color = get_color(pixels[i], format);
+            //int color = pixels[i];
+            array[i] = color;
+            if (color == 1.0)
+                cpt++;
         }
         SDL_UnlockSurface(surface);
+        printf("%d\n", cpt);
         return array;
     }
 }
@@ -128,7 +135,7 @@ void create_file_to_solve(char* weights_path)
 
 void test()
 {
-    network _neural = load("Weights/weights_12072022_013155.txt");
+    network _neural = load("Weights/weights_12102022_193553.txt");
     network *_network = &_neural;
 
 
@@ -157,7 +164,7 @@ void test()
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp > 128 ? 1 : 0;
+            p[j] = temp == 255 ? 1 : 0;
         }
 
 
@@ -178,7 +185,7 @@ void test()
     printf("%d on 29900", ok);
 }
 
-void train()
+void train(int cpt)
 {
     network _neural;
     network *_network = &_neural;
@@ -192,12 +199,12 @@ void train()
         errx(EXIT_FAILURE, "Dataset file does not exist");
     }
     
-    int *desired_ouputs = malloc(29900 * sizeof(int));
-    double **inputs = malloc(29900 * sizeof(double*));
+    int *desired_ouputs = malloc(cpt * sizeof(int));
+    double **inputs = malloc(cpt * sizeof(double*));
 
     char *line = NULL;
     size_t length = 0;
-    for (size_t i = 0; i < 29900; i++)
+    for (size_t i = 0; i < cpt; i++)
     {
         double *p = malloc(784 * sizeof(double));
 
@@ -210,7 +217,7 @@ void train()
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp > 128 ? 1 : 0;
+            p[j] = temp == 255 ? 1 : 0;
         }
 
 
@@ -238,8 +245,90 @@ void train()
     save(_network);
 }
 
+void train2()
+{
+    /*
+    network _neural;
+    network *_network = &_neural;
+    *_network = create_network(784, 16, 9, 3);
+    initialize_weights(_network);
+    */
+
+    FILE *file = fopen("Dataset/non.txt", "w+");
+
+    FILE *fp;
+    char row[5000];
+    char *token;
+    fp = fopen("Dataset/TMNIST.csv","r");
+
+    if (fp == NULL)
+    {
+        errx(EXIT_FAILURE, "Dataset file does not exist");
+    }
+
+    int *desired_ouputs = malloc(29900 * sizeof(int));
+    double **inputs = malloc(29900 * sizeof(double*));
+
+    int cpt = 0;
+    while (feof(fp) != true)
+    {
+        fgets(row, 5000, fp);
+
+        token = strtok(row, ",");
+
+        double output = atof(token);
+        double *p = malloc(784 * sizeof(double));
+
+        int i = 0;
+        while (token != NULL)
+        {
+            double temp = atof(token);
+            p[i] = temp == 255 ? 1 : 0;
+            token = strtok(NULL, ",");
+            if (cpt != 0)
+                fprintf(file, "%f\n", temp);
+            i++;
+        }
+
+        if (cpt != 0)
+        {
+            desired_ouputs[cpt - 1] = output;
+            inputs[cpt - 1] = p;
+        }
+
+        cpt++;
+    }
+
+    fclose(fp);
+    fclose(file);
+    /*
+    for (int epoch = 0; epoch < 200; epoch++)
+    {
+        for (int input_nb = 0; input_nb < 29900; input_nb++)
+        {
+            printf("Epoch n°:%d -- Input n°:%d\n", epoch + 1, input_nb + 1);
+            forward_prop(_network, inputs[input_nb]);
+            back_prop(_network, get_desired_ouputs(desired_ouputs[input_nb]));
+            gradient_descent(_network, 0.01);
+        }
+    }
+
+    save(_network);
+
+    free(desired_ouputs);
+    free(inputs);
+    network_free(_network);
+     */
+    train(cpt - 1);
+}
+
+
 int main(int argc, char** argv){
-    if (argc == 2)
+    if (argc == 1)
+    {
+        train2();
+    }
+    else if (argc == 2)
     {
         test();
     }
@@ -247,7 +336,7 @@ int main(int argc, char** argv){
     {
         if (*argv[1] == '1')
         {
-            train();
+            train(29900);
         }
         else if (*argv[1] == '0')
         {
