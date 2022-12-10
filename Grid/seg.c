@@ -90,6 +90,17 @@ void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel)
 	}
 }
 
+SDL_Surface* block_resize(SDL_Surface *block, int pix_w, int pix_h)
+{
+  // Create a new surface with the desired dimensions
+  SDL_Surface* wanted_surf_dim = SDL_CreateRGBSurface(0, pix_w, pix_h, 32, 0, 0, 0, 0);
+  
+  // Copy the pixels from the original surface and scale them to the new size
+  SDL_BlitScaled(block, NULL, wanted_surf_dim, NULL);
+
+  return wanted_surf_dim;
+}
+
 void setlines(SDL_Surface *image, int *x, int *y)
 {
 	Uint32 pixel = SDL_MapRGB(image->format, 255, 62, 181);
@@ -226,14 +237,22 @@ void segmentation(SDL_Surface *image, SDL_Surface* image2)
 			rectangle.w = x[j+1] - (x[j]);
 			rectangle.h = y[i+1] - (y[i]);
 
-			SDL_Surface *croped = SDL_CreateRGBSurface(0, rectangle.w-20, rectangle.h-20, 32, 0, 0, 0, 0);
+			SDL_Surface *croped =
+			  SDL_CreateRGBSurface(0,
+					       rectangle.w-20,
+					       rectangle.h-20, 32, 0, 0, 0, 0);
 			SDL_BlitSurface(image2,&rectangle,croped,NULL);
+			/*SDL_Surface *croped2 =
+			  SDL_CreateRGBSurface(0,
+					       croped->w - 20,
+					       20, 32, 0, 0, 0, 0);
+					       SDL_BlitSurface(image2,&rectangle,croped,NULL);*/
 
 			char buffer[100];
 			snprintf(buffer, sizeof(buffer), "../BMP/%d.bmp", cpt);
 			cpt++;
 
-			if(SDL_SaveBMP(croped, buffer) != 0)
+			if(SDL_SaveBMP(block_resize(croped, 28, 28)/*croped*/, buffer) != 0)
 			{
 				printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
 			}
@@ -254,7 +273,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	init_sdl();
+	/*init_sdl();
 	
 	// Creates a window.
 	SDL_Window* window = SDL_CreateWindow("Hough lines", 0, 0, 640, 400,
@@ -265,15 +284,28 @@ int main(int argc, char **argv)
 	// Creates a renderer.
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	if (renderer == NULL)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
+        errx(EXIT_FAILURE, "%s", SDL_GetError());*/
 	
 	SDL_Surface* image_surface = load_image(argv[1]);
 	SDL_Surface* image_filtered = load_image(argv[2]);
 	
 	segmentation(image_surface, image_filtered);
 
+	/*
+
+	SDL_Surface * block1 = SDL_LoadBMP("../BMP/1.bmp");
+	char buffer[100];
+	snprintf(buffer, sizeof(buffer), "../BMP/1_28.bmp");
+	if(SDL_SaveBMP(block_resize(block1, 28, 28), buffer) != 0)
+	  {
+	    printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
+	  }
+	*/
+
+	
+
 	//SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image_surface);
-	SDL_Surface * image = SDL_LoadBMP("../BMP/test.bmp");
+	/*SDL_Surface * image = SDL_LoadBMP("../BMP/test.bmp");
 	SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
 	SDL_Event event;
 	int bool = 1;
@@ -295,7 +327,7 @@ int main(int argc, char **argv)
 	SDL_FreeSurface(image_surface);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	SDL_Quit();
+	SDL_Quit();*/
 	
 	return EXIT_SUCCESS;
 }

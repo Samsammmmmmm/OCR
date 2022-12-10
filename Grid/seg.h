@@ -16,6 +16,8 @@ Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y);
 
 void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 
+SDL_Surface* block_resize(SDL_Surface *block, int w, int h);
+
 void setlines(SDL_Surface *image, int *x, int *y);
 
 void getlines(SDL_Surface *image, int *x, int *y);
