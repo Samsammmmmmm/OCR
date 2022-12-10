@@ -13,19 +13,21 @@
 // Makes the widgets global
 GtkBuilder* builder;
 GtkWindow* window;
-GtkWindow* parameters_window;
 GtkFixed* fixed;
-GtkFixed* fixed_para;
-GtkButton* button_parameters;
 GtkButton* button_solve;
 GtkButton* button_save;
+GtkButton* button_parameters;
 GtkButton* button_train;
 GtkLabel* label_step;
 GtkLabel* label_dataset;
 GtkLabel* label_config;
 GtkFileChooserButton* button_file_chooser;
+GtkFileChooserButton* button_dataset_chooser;
+GtkFileChooserButton* button_config_chooser;
 GtkImage* grid;
 gchar *filename = NULL;
+gchar *dataset = NULL;
+gchar *configfile = NULL;
 
 // function that recreate the new image selected
 void update_image(GtkContainer* fixed, gchar* filename, GtkWidget* grid)
@@ -54,6 +56,7 @@ void on_file_set(GtkFileChooserButton *f)
     gtk_widget_set_sensitive ((GtkWidget*) button_save, FALSE);
 }
 
+
 // event handler for the solve button. Call all the functions to solve the grid
 void on_button_solve_clicked(GtkButton *button)
 {
@@ -61,7 +64,7 @@ void on_button_solve_clicked(GtkButton *button)
     
     //takes the solved grid in the files and displays it
     
-    //update_image((GtkContainer*) fixed, filename + .result, (GtkWidget*) grid);
+    update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     
     //change the step label
     gtk_label_set_label((GtkLabel*)label_step, "step in progress : grid solved\n");
@@ -73,7 +76,7 @@ void on_button_solve_clicked(GtkButton *button)
 void on_button_save_clicked(GtkButton *button)
 {
     SDL_Surface* solved_surface;
-    gchar* fileresult = "starting_grid2.png"; // put the name of the solved grid
+    gchar* fileresult = "../Graphics/load.png"; // put the name of the solved grid
     solved_surface = IMG_Load(fileresult);
     if (SDL_SaveBMP(solved_surface, "results/result.bmp") != 0)
     {
@@ -87,7 +90,32 @@ void on_button_save_clicked(GtkButton *button)
 void on_button_parameters_clicked(GtkButton *button)
 {
     printf("parameters\n");
-    gtk_widget_show((GtkWidget*) parameters_window);// display the window
+    if (gtk_widget_get_visible ((GtkWidget*)button_train)){
+        gtk_widget_hide((GtkWidget*) label_dataset);// hide the buttons & labels
+        gtk_widget_hide((GtkWidget*) label_config);
+        gtk_widget_hide((GtkWidget*) button_train);
+        gtk_widget_hide((GtkWidget*) button_dataset_chooser);
+        gtk_widget_hide((GtkWidget*) button_config_chooser);
+    }
+    else{
+    gtk_widget_show((GtkWidget*) label_dataset);// display the buttons & labels
+    gtk_widget_show((GtkWidget*) label_config);
+    gtk_widget_show((GtkWidget*) button_train);
+    gtk_widget_show((GtkWidget*) button_dataset_chooser);
+    gtk_widget_show((GtkWidget*) button_config_chooser);
+    }
+}
+void on_button_train_clicked(GtkButton *button)
+{
+    printf("train clicked\n");
+}
+void on_dataset_set(GtkFileChooserButton *f)
+{
+    printf("dataset clicked\n");
+}
+void on_config_set(GtkFileChooserButton *f)
+{
+     printf("config clicked\n");
 }
 
 int main (int argc, char *argv[])
@@ -110,9 +138,7 @@ int main (int argc, char *argv[])
 
     // Gets the widgets.
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
-    parameters_window = GTK_WINDOW(gtk_builder_get_object(builder, "parameters_window"));
     fixed = GTK_FIXED(gtk_builder_get_object(builder, "fixed"));
-    fixed_para = GTK_FIXED(gtk_builder_get_object(builder, "fixed_para"));
     button_parameters = GTK_BUTTON(gtk_builder_get_object(builder, "button_parameters"));
     button_solve = GTK_BUTTON(gtk_builder_get_object(builder, "button_solve"));
     button_save = GTK_BUTTON(gtk_builder_get_object(builder, "button_save"));
@@ -121,16 +147,19 @@ int main (int argc, char *argv[])
     label_dataset = GTK_LABEL(gtk_builder_get_object(builder, "label_dataset"));
     label_config = GTK_LABEL(gtk_builder_get_object(builder, "label_config"));
     button_file_chooser = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "button_file_chooser"));
+    button_dataset_chooser = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "button_dataset_chooser"));
+    button_config_chooser = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "button_config_chooser"));
     grid = GTK_IMAGE(gtk_builder_get_object(builder, "grid"));
 
     // Connects event handlers.
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    g_signal_connect(parameters_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    g_signal_connect(button_parameters, "clicked", G_CALLBACK(on_button_parameters_clicked), NULL);
-    //g_signal_connect(button_train, "clicked", G_CALLBACK(on_button_train_clicked), NULL);
+    g_signal_connect(button_parameters, "clicked", G_CALLBACK(on_button_parameters_clicked), &button_parameters);
+    g_signal_connect(button_train, "clicked", G_CALLBACK(on_button_train_clicked), NULL);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(on_button_solve_clicked), NULL);
     g_signal_connect(button_save, "clicked", G_CALLBACK(on_button_save_clicked), NULL);
     g_signal_connect(button_file_chooser, "file-set", G_CALLBACK(on_file_set), NULL);
+    g_signal_connect(button_dataset_chooser, "file-set", G_CALLBACK(on_dataset_set), NULL);
+    g_signal_connect(button_config_chooser, "file-set", G_CALLBACK(on_config_set), NULL);
 
     //Initialize the first states
     gtk_widget_set_sensitive ((GtkWidget*) button_solve, FALSE);

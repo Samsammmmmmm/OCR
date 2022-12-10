@@ -37,8 +37,8 @@
             <property name="image-position">right</property>
           </object>
           <packing>
-            <property name="x">894</property>
-            <property name="y">37</property>
+            <property name="x">55</property>
+            <property name="y">200</property>
           </packing>
         </child>
         <child>
@@ -83,7 +83,7 @@
         </child>
         <child>
           <object class="GtkLabel" id="label_step">
-            <property name="width-request">311</property>
+            <property name="width-request">397</property>
             <property name="height-request">36</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -97,7 +97,61 @@
           </object>
           <packing>
             <property name="x">384</property>
-            <property name="y">554</property>
+            <property name="y">624</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_dataset">
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Dataset :</property>
+          </object>
+          <packing>
+            <property name="x">6</property>
+            <property name="y">280</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_config">
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Config file :</property>
+          </object>
+          <packing>
+            <property name="x">5</property>
+            <property name="y">403</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_train">
+            <property name="label" translatable="yes">Train</property>
+            <property name="width-request">100</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">68</property>
+            <property name="y">333</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFileChooserButton" id="button_dataset_chooser">
+            <property name="width-request">171</property>
+            <property name="can-focus">False</property>
+            <property name="title" translatable="yes"/>
+          </object>
+          <packing>
+            <property name="x">69</property>
+            <property name="y">274</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFileChooserButton" id="button_config_chooser">
+            <property name="width-request">166</property>
+            <property name="can-focus">False</property>
+            <property name="title" translatable="yes"/>
+          </object>
+          <packing>
+            <property name="x">82</property>
+            <property name="y">394</property>
           </packing>
         </child>
       </object>
