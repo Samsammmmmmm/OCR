@@ -35,6 +35,38 @@ double* get_desired_ouputs(int x)
     }
 }
 
+
+Uint32 getpixel(SDL_Surface *surface, int x, int y)
+{
+    Uint8 bpp = surface->format->BytesPerPixel;
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp){
+        case 1:
+            return *p;
+            break;
+        case 2:
+            return *(Uint16 *)p;
+            break;
+        case 3:
+            if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+                return p[0] << 16 | p[1] << 8 | p[2];
+            else
+                return p[0] | p[1] << 8 | p[2] << 16;
+        case 4:
+            return *(Uint32 *)p;
+        default:
+            return 0;
+    }
+}
+int GetValueOfPixel(int x, int y, SDL_Surface *image)
+{
+    Uint32 pixel = getpixel(image, x, y);
+    Uint8 white;
+    SDL_GetRGB(pixel,image->format,&white,&white,&white);
+    return white;
+}
+
 double get_color(Uint32 pixel_color, SDL_PixelFormat* format)
 {
     SDL_Color rgb;
@@ -50,32 +82,34 @@ double get_color(Uint32 pixel_color, SDL_PixelFormat* format)
 
 double* to_array(SDL_Surface* surface)
 {
-    Uint32* pixels = surface->pixels;
-    int len = surface->w * surface->h;
-    double *array = malloc((len + 1) * sizeof(double));
-    SDL_PixelFormat *format = surface->format;
-    if (SDL_LockSurface(surface) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-    else
+    double *array = malloc(28*28 * sizeof(double));
+    int cpt = 0;
+    for (int i = 0; i < 28; i++)
     {
-        int cpt = 0;
-        for (int i = 0; i < len; i++)
+        for (int j = 0; j < 28; j++)
         {
-            int color = get_color(pixels[i], format);
-            //int color = pixels[i];
-            array[i] = color;
-            if (color == 1.0)
-                cpt++;
+            int p = GetValueOfPixel(i, j, surface);
+            if (p == 255)
+            {
+                array[i + p] = 1;
+            }
+            array[i + j] = 0;
         }
-        SDL_UnlockSurface(surface);
-        printf("%d\n", cpt);
-        return array;
     }
+    return array;
 }
 
 int is_black(SDL_Surface* surface)
 {
-    return 0;
+    double* color = to_array(surface);
+    int cpt = 0;
+    for (int i = 0; i < 784; i++)
+    {
+        double temp = color[i];
+        if (temp == 1)
+            cpt++;
+    }
+    return cpt == 0;
 }
 
 int get_number(network *_network)
@@ -107,7 +141,7 @@ void create_file_to_solve(char* weights_path)
         {
             char path[255];
             //sprintf(path, "../Grid/%zu.bmp", cpt + 1);
-            sprintf(path, "../Grid/1.bmp");
+            sprintf(path, "../Grid/white.bmp");
             if (j == 3 || j == 6)
                 fprintf(to_solve, " ");
             if (is_black(SDL_LoadBMP(path)))
@@ -261,6 +295,7 @@ void train(char* path)
     save(_network);
 }
 
+/*
 int main(int argc, char** argv)
 {
     if (argc == 2)
@@ -284,3 +319,4 @@ int main(int argc, char** argv)
         errx(EXIT_FAILURE, "Usage:");
     return 0;
 }
+ */

@@ -1,5 +1,5 @@
 #include "print_solu.h"
-
+/*
 SDL_Surface* load_image(const char* path)
 {
     //load image
@@ -75,7 +75,7 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
         break;
     }
 }
-
+*/
 void image_result(SDL_Surface* grid, char file01[], char file02[])
 {
     FILE *file1 = fopen(file01, "r");
@@ -204,7 +204,7 @@ void image_result(SDL_Surface* grid, char file01[], char file02[])
     }
 }
 
-void image_result(char file01[], char file02[])
+void image_result_solu(char file01[], char file02[])
 {
     SDL_Surface* load=load_image("empty_grid.png");
     image_result(load, file01, file02);
