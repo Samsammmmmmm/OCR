@@ -1,8 +1,8 @@
 # Makefile
 
 CC = gcc
-CFLAGS = `pkg-config --cflags gtk+-3.0` -Wall -O3
-LDLIBS = `pkg-config --libs gtk+-3.0`
+CFLAGS = `pkg-config --cflags gtk+-3.0 sdl2 SDL2_image` -Wall -O3
+LDLIBS = `pkg-config --libs gtk+-3.0 sdl2 SDL2_image`
 
 EXE = ui
 
@@ -14,5 +14,4 @@ $(foreach f, $(EXE), $(eval $(f):))
 
 clean:
 	${RM} $(EXE)
-
-# END
+#END
