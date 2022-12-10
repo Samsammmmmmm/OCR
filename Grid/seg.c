@@ -204,7 +204,7 @@ int compare_function(const void *a,const void *b)
 	return *x - *y;
 }
 
-void segmentation(SDL_Surface *image)
+void segmentation(SDL_Surface *image, SDL_Surface* image2)
 {
 	int *x = malloc(10 * sizeof(int));
 	int *y = malloc(10 * sizeof(int));
@@ -214,23 +214,23 @@ void segmentation(SDL_Surface *image)
 	qsort(x,10,sizeof(int),compare_function);
 	qsort(y,10,sizeof(int),compare_function);
 	setlines(image,x,y);
-	SDL_SaveBMP(image, "test.bmp");
+	SDL_SaveBMP(image, "../BMP/test.bmp");
 	int cpt = 1;
 	for(int i = 0; i < 9; i++)
 	{
 		for(int j = 0; j < 9; j++)
 		{
 			SDL_Rect rectangle;
-			rectangle.x = x[j];
-			rectangle.y = y[i];
-			rectangle.w = x[j+1] - x[j];
-			rectangle.h = y[i+1] - y[i];
+			rectangle.x = x[j]+10;
+			rectangle.y = y[i]+10;
+			rectangle.w = x[j+1] - (x[j]);
+			rectangle.h = y[i+1] - (y[i]);
 
-			SDL_Surface *croped = SDL_CreateRGBSurface(0, rectangle.w, rectangle.h, 32, 0, 0, 0, 0);
-			SDL_BlitSurface(image,&rectangle,croped,NULL);
+			SDL_Surface *croped = SDL_CreateRGBSurface(0, rectangle.w-20, rectangle.h-20, 32, 0, 0, 0, 0);
+			SDL_BlitSurface(image2,&rectangle,croped,NULL);
 
 			char buffer[100];
-			snprintf(buffer, sizeof(buffer), "./%d.bmp", cpt);
+			snprintf(buffer, sizeof(buffer), "../BMP/%d.bmp", cpt);
 			cpt++;
 
 			if(SDL_SaveBMP(croped, buffer) != 0)
@@ -249,8 +249,8 @@ void segmentation(SDL_Surface *image)
 
 int main(int argc, char **argv)
 {
-	if (argc != 2){
-		errx(1,"the segmentation function takes 2 parameters");
+	if (argc != 3){
+		errx(1,"the segmentation function takes 3 parameters");
 		return EXIT_FAILURE;
 	}
 
@@ -268,11 +268,12 @@ int main(int argc, char **argv)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 	
 	SDL_Surface* image_surface = load_image(argv[1]);
+	SDL_Surface* image_filtered = load_image(argv[2]);
 	
-	segmentation(image_surface);
+	segmentation(image_surface, image_filtered);
 
 	//SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image_surface);
-	SDL_Surface * image = SDL_LoadBMP("test.bmp");
+	SDL_Surface * image = SDL_LoadBMP("../BMP/test.bmp");
 	SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
 	SDL_Event event;
 	int bool = 1;

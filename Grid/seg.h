@@ -22,6 +22,6 @@ void getlines(SDL_Surface *image, int *x, int *y);
 
 int compare_function(const void *a,const void *b) ;
 
-void segmentation(SDL_Surface *image);
+void segmentation(SDL_Surface *image, SDL_Surface *image2);
 
 int main(int argc, char **argv);
