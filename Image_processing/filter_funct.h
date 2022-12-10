@@ -16,5 +16,5 @@ void median_filter(SDL_Surface *surface);
 void contrast(SDL_Surface *surface);
 void gamma_filter(SDL_Surface *surface);
 void sobel_filter(SDL_Surface *surface);
-
+int img_process(gchar* filename);
 #endif

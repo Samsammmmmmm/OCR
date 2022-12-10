@@ -249,3 +249,37 @@ void sobel_filter(SDL_Surface* surface)
     }
     SDL_UnlockSurface(surface);
 }
+
+
+int img_process(gchar* filename)
+{
+    SDL_Surface* surface = load_image(filename);
+    if (surface == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
+    //copy surface existing
+    SDL_Surface* detect_ligns = load_image(filename);
+    if (detect_ligns == NULL)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+    
+    // - Do the processing.
+    
+    gamma_filter(surface);
+    contrast(surface);
+    otsu_tresholding(surface);
+    median_filter(surface);
+    save_image(surface, "../BMP/result.png");
+
+    gamma_filter(detect_ligns);
+    contrast(detect_ligns);
+    otsu_tresholding(detect_ligns);
+    sobel_filter(detect_ligns);
+    save_image(detect_ligns, "../BMP/ligns.png");
+
+  
+    // - Free the surface.
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(detect_ligns);
+    
+    return EXIT_SUCCESS;
+}
