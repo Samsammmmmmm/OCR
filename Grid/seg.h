@@ -16,12 +16,14 @@ Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y);
 
 void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 
+SDL_Surface* block_resize(SDL_Surface *block, int w, int h);
+
 void setlines(SDL_Surface *image, int *x, int *y);
 
 void getlines(SDL_Surface *image, int *x, int *y);
 
 int compare_function(const void *a,const void *b) ;
 
-void segmentation(SDL_Surface *image);
+void segmentation(SDL_Surface *image, SDL_Surface *image2);
 
 int main(int argc, char **argv);

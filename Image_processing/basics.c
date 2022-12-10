@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <err.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include "basics.h"
 
 SDL_Surface* load_image(const char* path)
