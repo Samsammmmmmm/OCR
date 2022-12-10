@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <err.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "print_solu.h"
 
 SDL_Surface* load_image(const char* path)
 {
@@ -79,169 +76,144 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-
-void resize_surfaceForNN(SDL_Surface* src,SDL_Surface* dest)
+void image_result(SDL_Surface* grid, char file01[], char file02[])
 {
-    int i,j,k;
-    double rx,ry;
-    rx = dest->w*1.0/src->w;
-    ry = dest->h*1.0/src->h;
-    for(i=0;i<dest->w;i++)
-        for(j=0;j<dest->h;j++)
-        {
-            Uint32 pix;
-            pix = get_pixel(src,(int)(i/rx),(int)(j/ry));
-            put_pixel(dest,i,j,pix);
-        }
-}
-
-
-void image_result(SDL_Surface* grid)
-{
-    int c;
-    FILE *file;
-    file = fopen("grid.txt", "r");
-    if (file == NULL)
+    FILE *file1 = fopen(file01, "r");
+    if (file1 == NULL)
     {
         printf("Grid not found !");
         return;
     }
-    char grid_nsolve[200] = "";
+    char grid_to_solve[200] = "";
     int i = 0;
-    if (file) {
-        while ((c = getc(file)) != EOF)
+    int c;
+    if (file1)
+    {
+        while ((c = getc(file1)) != EOF)
         {
-//putchar(c);
             if (c != '\n' && c != ' ')
             {
-                grid_nsolve[i] = c;
+                grid_to_solve[i] = c;
                 i++;
             }
         }
-        fclose(file);
+        fclose(file1);
     }
-    i = 0;
-//printf("\n");
-    int c2;
-    FILE *file2;
-    file2 = fopen("solved_grid.txt", "r");
+    FILE *file2 = fopen(file02, "r");
     if (file2 == NULL)
     {
         printf("Result grid not found!");
         return;
     }
-    char grid_solve[200] = "";
+    char grid_solved[200] = "";
     i = 0;
-    if (file) {
+    int c2;
+    if (file2)
+    {
         while ((c2 = getc(file2)) != EOF)
         {
-//putchar(c2);
             if (c2 != '\n' && c2 != (char) 32)
             {
-                grid_solve[i] = c2;
+                grid_solved[i] = c2;
                 i++;
             }
         }
         fclose(file2);
     }
-    i = 0;
-    int arrayX[9] = {6+7,60+7,116+7,173+7,227+7,282+7,340+7,393+7,448+7};
-    int arrayY[9] = {6+7,59+7,116+7,172+7,226+7,281+7,339+7,393+7,447+7};
-    int xnSolve = 0;
-    int xSolve = 0;
-
-    for (int j = 0 ; j < 9 ; j ++)
+    int array1[9] = {6+7,60+7,116+7,173+7,227+7,282+7,340+7,393+7,448+7};
+    int array2[9] = {6+7,59+7,116+7,172+7,226+7,281+7,339+7,393+7,447+7};
+    int xbis = 0;
+    int ybis = 0;
+    for (int y = 0 ; y < 9 ; y ++)
     {
-        for (int i = 0 ; i < 9 ; i ++)
+        for (int x = 0 ; x < 9 ; x ++)
         {
             SDL_Surface* Case;
-            if (grid_nsolve[xnSolve] == '.')
+            switch(grid_solved[ybis])
             {
-                switch(grid_solve[xSolve])
-                {
-                case ('1'):
+            case ('1'):
+                if (grid_to_solve[xbis] == '.')
                     Case = load_image("number_1_orange.png");
-                    break;
-                case ('2'):
-                    Case =load_image("number_2_orange.png");
-                    break;
-                case ('3'):
-                    Case =  load_image("number_3_orange.png");
-                    break;
-                case ('4'):
-                    Case =  load_image("number_4_orange.png");
-                    break;
-                case ('5'):
-                    Case =  load_image("number_5_orange.png");
-                    break;
-                case ('6'):
-                    Case = load_image("number_6_orange.png");
-                    break;
-                case ('7'):
-                    Case = load_image("number_7_orange.png");
-                    break;
-                case ('8'):
-                    Case =  load_image("number_8_orange.png");
-                    break;
-                default:
-                    Case =  load_image("number_9_orange.png");
-                    break;
-                }
-            }
-            else
-            {
-                switch(grid_solve[xSolve])
-                {
-                case ('1'):
+                else
                     Case = load_image("number_1_black.png");
-                    break;
-                case ('2'):
+                break;
+            case ('2'):
+                if (grid_to_solve[xbis] == '.')
+                    Case =load_image("number_2_orange.png");
+                else
                     Case =load_image("number_2_black.png");
-                    break;
-                case ('3'):
+                break;
+            case ('3'):
+                if (grid_to_solve[xbis] == '.')
+                    Case =  load_image("number_3_orange.png");
+                else
                     Case =  load_image("number_3_black.png");
-                    break;
-                case ('4'):
+                break;
+            case ('4'):
+                if (grid_to_solve[xbis] == '.')
+                    Case =  load_image("number_4_orange.png");
+                else
                     Case =  load_image("number_4_black.png");
-                    break;
-                case ('5'):
+                break;
+            case ('5'):
+                if (grid_to_solve[xbis] == '.')
+                    Case =  load_image("number_5_orange.png");
+                else
                     Case =  load_image("number_5_black.png");
-                    break;
-                case ('6'):
+                break;
+            case ('6'):
+                if (grid_to_solve[xbis] == '.')
+                    Case = load_image("number_6_orange.png");
+                else
                     Case = load_image("number_6_black.png");
-                    break;
-                case ('7'):
+                break;
+            case ('7'):
+                if (grid_to_solve[xbis] == '.')
+                    Case = load_image("number_7_orange.png");
+                else
                     Case = load_image("number_7_black.png");
-                    break;
-                case ('8'):
+                break;
+            case ('8'):
+                if (grid_to_solve[xbis] == '.')
+                    Case =  load_image("number_8_orange.png");
+                else
                     Case =  load_image("number_8_black.png");
-                    break;
-                default:
+                break;
+            default:
+                if (grid_to_solve[xbis] == '.')
+                    Case =  load_image("number_9_orange.png");
+                else
                     Case = load_image("number_9_black.png");
-                    break;
-
-                }
+                break;
             }
-
-            for (int i2 = 0 ; i2 < Case->w ; i2 ++)
+            for (int x2 = 0 ; x2 < Case->w ; x2 ++)
             {
-                for (int j2 = 0 ; j2 < Case->h ; j2 ++)
+                for (int y2 = 0 ; y2 < Case->h ; y2 ++)
                 {
-                    Uint32 pixel = get_pixel(Case,i2,j2);
-                    put_pixel(grid,arrayX[i] + i2,arrayY[j] + j2,pixel);
+                    Uint8 r, g, b;
+                    Uint32 pixel = get_pixel(Case,x2,y2);
+                    SDL_GetRGB(pixel, Case->format, &r, &g, &b);
+                    if(!(r==0 && g==0 && b==0))
+                        put_pixel(grid,array1[x] + x2,array2[y] + y2,pixel);
                 }
             }
             SDL_FreeSurface(Case);
-            xnSolve++;
-            xSolve++;
+            xbis++;
+            ybis++;
         }
     }
-
 }
-int main()
+
+
+int main(int argc, char** argv)
 {
+    // Checks the number of arguments.
+    if (argc != 2 && argc != 3)
+        errx(EXIT_FAILURE, "image file");
+     // Initializes the SDL.
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
     SDL_Surface* load=load_image("empty_grid.png");
-    image_result(load);
+    image_result(load, argv[1], argv[2]);
     save_image(load, "load.png");
 }
-
