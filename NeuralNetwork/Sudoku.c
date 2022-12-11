@@ -285,7 +285,7 @@ char* train(char* path)
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp == 1 ? 1 : 0;
+            p[j] = temp > 128 ? 1 : 0;
         }
 
 
