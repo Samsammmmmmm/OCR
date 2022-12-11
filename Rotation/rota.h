@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "../Image_processing/basics.h"
 
 void draw(SDL_Renderer* renderer, SDL_Texture* texture, double angle);
 
