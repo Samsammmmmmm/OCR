@@ -67,19 +67,6 @@ int GetValueOfPixel(int x, int y, SDL_Surface *image)
     return white;
 }
 
-double get_color(Uint32 pixel_color, SDL_PixelFormat* format)
-{
-    SDL_Color rgb;
-    Uint8 r, g, b;
-    SDL_GetRGB(pixel_color, format, &rgb.r, &rgb.g, &rgb.b);
-    int color;
-    if(rgb.r == 255)
-        color = 1.0;
-    else
-        color = 0.0;
-    return color;
-}
-
 double* to_array(SDL_Surface* surface)
 {
     double *array = malloc(28*28 * sizeof(double));
@@ -169,7 +156,7 @@ void create_file_to_solve(char* weights_path)
 
 void test()
 {
-    network _neural = load("Weights/weights_12072022_013155.txt");
+    network _neural = load("Weights/weights_12112022_104119.txt");
     network *_network = &_neural;
 
 
@@ -219,21 +206,61 @@ void test()
     printf("%d on 29900", ok);
 }
 
+//Convert a csv file into a txt
+void csv_to_txt(char* path, int* cpt)
+{
+    int MAXCHAR = 5000;
+    FILE *fp;
+    char row[MAXCHAR];
+    char *token;
+
+    fp = fopen("Dataset/TMNIST.csv","r");
+
+    FILE *file;
+    file = fopen("Dataset/convert.txt", "w+");
+
+    int first = 0;
+    while (feof(fp) != true)
+    {
+        fgets(row, MAXCHAR, fp);
+
+        token = strtok(row, ",");
+
+        while(token != NULL)
+        {
+            if (first)
+                fprintf(file, "%f\n", atof(token));
+            token = strtok(NULL, ",");
+        }
+        if (!first)
+            first++;
+        else
+            *cpt = *cpt + 1;
+    }
+    *cpt = *cpt - 1;
+    fclose(file);
+    fclose(fp);
+}
+
 void train(char* path)
 {
+    int *lines = malloc(sizeof(int));
+    *lines = 0;
+    csv_to_txt(path, lines);
+
     //init network
     network _neural;
     network *_network = &_neural;
     *_network = create_network(784, 16, 9, 3);
     initialize_weights(_network);
 
-    FILE *file = fopen(path, "r");
+    FILE *file = fopen("Dataset/convert.txt", "r");
 
     if (file == NULL)
     {
         errx(EXIT_FAILURE, "Dataset file does not exist");
     }
-
+    /*
     //get number of lines
     int lines = 0;
     while(!feof(file))
@@ -247,13 +274,13 @@ void train(char* path)
     lines = lines / 785;
     fclose(file);
 
-    file = fopen(path, "r");
-    int *desired_ouputs = malloc(lines * sizeof(int));
-    double **inputs = malloc(lines * sizeof(double*));
+    file = fopen(path, "r"); */
+    int *desired_ouputs = malloc(*lines * sizeof(int));
+    double **inputs = malloc(*lines * sizeof(double*));
 
     char *line = NULL;
     size_t length = 0;
-    for (size_t i = 0; i < lines; i++)
+    for (size_t i = 0; i < *lines; i++)
     {
         double *p = malloc(784 * sizeof(double));
 
@@ -266,7 +293,7 @@ void train(char* path)
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp == 255 ? 1 : 0;
+            p[j] = temp > 128 ? 1 : 0;
         }
 
 
@@ -295,7 +322,7 @@ void train(char* path)
     save(_network);
 }
 
-/*
+
 int main(int argc, char** argv)
 {
     if (argc == 2)
@@ -319,4 +346,3 @@ int main(int argc, char** argv)
         errx(EXIT_FAILURE, "Usage:");
     return 0;
 }
- */

@@ -9,7 +9,9 @@
 
 double* get_desired_ouputs(int x);
 
-double get_color(Uint32 pixel_color, SDL_PixelFormat* format);
+Uint32 getpixel(SDL_Surface *surface, int x, int y);
+
+int GetValueOfPixel(int x, int y, SDL_Surface *image);
 
 double* to_array(SDL_Surface* surface);
 
@@ -18,6 +20,8 @@ int is_black(SDL_Surface* surface);
 int get_number(network *_network);
 
 void create_file_to_solve(char* weights_path);
+
+void csv_to_txt(char* path, int* cpt);
 
 void train(char* path);
 
