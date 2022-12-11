@@ -58,7 +58,7 @@ void on_file_set(GtkFileChooserButton *f)
 void on_button_solve_clicked(GtkButton *button)
 {
     // put all the functions that solve the grid
-    img_process(filename);
+    //img_process(filename);
     //update_image((GtkContainer*) fixed, "BMP/result.png", (GtkWidget*) grid); //image pretreatment
     SDL_Surface* image_surface = load_image2("BMP/ligns1.png");
     SDL_Surface* image_filtered = load_image2("BMP/result1.png");
@@ -66,7 +66,7 @@ void on_button_solve_clicked(GtkButton *button)
 
     update_image((GtkContainer*) fixed, "BMP/detection_resize.png", (GtkWidget*) grid);
 
-
+    create_file_to_solve("NeuralNetwork/Weights/weights_12112022_104119.txt");
     //takes the solved grid in the files and displays it
     //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label

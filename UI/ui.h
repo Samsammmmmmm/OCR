@@ -10,6 +10,7 @@
 #include <string.h>
 #include "../Image_processing/filter_funct.h"
 #include "../Grid/seg.h"
+#include "../NeuralNetwork/Sudoku.h"
 
 void update_image(GtkContainer* fixed, gchar* filename, GtkWidget* grid);
 void on_file_set(GtkFileChooserButton *f);

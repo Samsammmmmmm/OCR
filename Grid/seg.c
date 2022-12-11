@@ -278,7 +278,7 @@ void segmentation(SDL_Surface *image, SDL_Surface* image2)
     save_resize(image2, 500, 500);
 	free(x);
 	free(y);
-    SDL_FreeSurface(image);
+    //SDL_FreeSurface(image);
 }
 
 /*

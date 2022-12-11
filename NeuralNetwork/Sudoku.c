@@ -127,8 +127,8 @@ void create_file_to_solve(char* weights_path)
         for (size_t j = 0; j < 9; j++)
         {
             char path[255];
-            //sprintf(path, "../Grid/%zu.bmp", cpt + 1);
-            sprintf(path, "../Grid/white.bmp");
+            sprintf(path, "BMP/%zu.bmp", cpt + 1);
+            //sprintf(path, "../Grid/white.bmp");
             if (j == 3 || j == 6)
                 fprintf(to_solve, " ");
             if (is_black(SDL_LoadBMP(path)))
