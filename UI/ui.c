@@ -1,6 +1,6 @@
 #include "ui.h"
 
-// add the headers of all the parts to call the diffrent functions
+// add the headers of all the parts to call the different functions
 
 
 // Makes the widgets global
@@ -75,7 +75,7 @@ void on_button_solve_clicked()//GtkButton *button)
     //takes the solved grid in the files and displays it
     //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label
-    gtk_label_set_label((GtkLabel*)label_step, "step in progress : grid solved\n");
+    gtk_label_set_label((GtkLabel*)label_step, "step in progress: grid solved\n");
     // activate the button save
     gtk_widget_set_sensitive ((GtkWidget*) button_save, TRUE);
 }
@@ -98,21 +98,25 @@ void on_button_save_clicked()//GtkButton *button)
 void on_button_startergrid_clicked()//GtkButton button)
 {
     update_image("BMP/og.png", (GtkWidget*) grid);
+    gtk_label_set_label((GtkLabel*)label_step, "step in progress: started grid\n");
 }
 
 void on_button_solved_clicked()//GtkButton button)
 {
     update_image("UI/results/result.png", (GtkWidget*) grid);
+    gtk_label_set_label((GtkLabel*)label_step, "step in progress: grid solved\n");
 }
 
 void on_button_pretreatment_clicked()//GtkButton button)
 {
     update_image("BMP/result_resize.png", (GtkWidget*) grid);
+    gtk_label_set_label((GtkLabel*)label_step, "step in progress: grid after pretreatment\n");
 }
 
 void on_button_lignesdetec_clicked()//GtkButton button)
 {
     update_image("BMP/detection_resize.png", (GtkWidget*) grid);
+    gtk_label_set_label((GtkLabel*)label_step, "step in progress: lines detection\n");
 }
 
 void on_button_parameters_clicked()//GtkButton *button)
