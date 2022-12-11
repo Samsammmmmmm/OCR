@@ -59,7 +59,12 @@ void on_button_solve_clicked(GtkButton *button)
 {
     // put all the functions that solve the grid
     img_process(filename);
-    update_image((GtkContainer*) fixed, "../BMP/result.png", (GtkWidget*) grid);
+    //update_image((GtkContainer*) fixed, "BMP/result.png", (GtkWidget*) grid); //image pretreatment
+    SDL_Surface* image_surface = load_image2("/BMP/ligns1.png");
+    SDL_Surface* image_filtered = load_image2("/BMP/result1.png");
+    segmentation(image_surface, image_filtered);
+    
+    update_image((GtkContainer*) fixed, "BMP/detection.jpg", (GtkWidget*) grid);
     //takes the solved grid in the files and displays it
     //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label
@@ -72,7 +77,7 @@ void on_button_solve_clicked(GtkButton *button)
 void on_button_save_clicked(GtkButton *button)
 {
     SDL_Surface* solved_surface;
-    gchar* fileresult = "../Graphics/load.png"; // put the name of the solved grid
+    gchar* fileresult = "Graphics/load.png"; // put the name of the solved grid
     solved_surface = IMG_Load(fileresult);
     if (SDL_SaveBMP(solved_surface, "results/result.bmp") != 0)
     {
@@ -126,7 +131,7 @@ int main (int argc, char *argv[])
     // Loads the UI description.
     // (Exits if an error occurs.)
     GError* error = NULL;
-    if (gtk_builder_add_from_file(builder, "SudokuUI.glade", &error) == 0)
+    if (gtk_builder_add_from_file(builder, "UI/SudokuUI.glade", &error) == 0)
     {
         g_printerr("Error loading file: %s\n", error->message);
         g_clear_error(&error);

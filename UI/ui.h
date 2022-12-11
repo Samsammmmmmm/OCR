@@ -8,8 +8,8 @@
 #include <SDL2/SDL_image.h>
 #include <signal.h>
 #include <string.h>
-//#include "../Image_processing/filter_funct.h"
 #include "../Image_processing/filter_funct.h"
+#include "../Grid/seg.h"
 
 void update_image(GtkContainer* fixed, gchar* filename, GtkWidget* grid);
 void on_file_set(GtkFileChooserButton *f);
