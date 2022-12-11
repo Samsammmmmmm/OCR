@@ -70,7 +70,6 @@ int GetValueOfPixel(int x, int y, SDL_Surface *image)
 double* to_array(SDL_Surface* surface)
 {
     double *array = malloc(28*28 * sizeof(double));
-    int cpt = 0;
     for (int i = 0; i < 28; i++)
     {
         for (int j = 0; j < 28; j++)
@@ -128,7 +127,6 @@ void create_file_to_solve(char* weights_path)
         {
             char path[255];
             sprintf(path, "BMP/%zu.bmp", cpt + 1);
-            //sprintf(path, "../Grid/white.bmp");
             if (j == 3 || j == 6)
                 fprintf(to_solve, " ");
             if (is_black(SDL_LoadBMP(path)))
@@ -156,11 +154,11 @@ void create_file_to_solve(char* weights_path)
 
 void test()
 {
-    network _neural = load("Weights/weights_12112022_104119.txt");
+    network _neural = load("Weights/weights_12112022_160534.txt");
     network *_network = &_neural;
 
 
-    FILE *file = fopen("Dataset/oui.txt", "r");
+    FILE *file = fopen("Dataset/convert.txt", "r");
 
     if (file == NULL)
     {
@@ -185,7 +183,7 @@ void test()
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp > 128 ? 1 : 0;
+            p[j] = temp == 1 ? 1 : 0;
         }
 
 
@@ -196,14 +194,14 @@ void test()
     fclose(file);
 
     int ok = 0;
-    for (int input_nb = 0; input_nb < 29900; input_nb++)
+    for (int input_nb = 0; input_nb < 30; input_nb++)
     {
         forward_prop(_network, inputs[input_nb]);
         if (get_number(_network) == desired_ouputs[input_nb])
             ok++;
     }
 
-    printf("%d on 29900", ok);
+    printf("%d on 30", ok);
 }
 
 //Convert a csv file into a txt
@@ -214,10 +212,10 @@ void csv_to_txt(char* path, int* cpt)
     char row[MAXCHAR];
     char *token;
 
-    fp = fopen("Dataset/TMNIST.csv","r");
+    fp = fopen(path,"r");
 
     FILE *file;
-    file = fopen("Dataset/convert.txt", "w+");
+    file = fopen("NeuralNetwork/Dataset/convert.txt", "w+");
 
     int first = 0;
     while (feof(fp) != true)
@@ -242,19 +240,13 @@ void csv_to_txt(char* path, int* cpt)
     fclose(fp);
 }
 
-void train(char* path)
+char* train(char* path)
 {
     int *lines = malloc(sizeof(int));
     *lines = 0;
     csv_to_txt(path, lines);
 
-    //init network
-    network _neural;
-    network *_network = &_neural;
-    *_network = create_network(784, 16, 9, 3);
-    initialize_weights(_network);
-
-    FILE *file = fopen("Dataset/convert.txt", "r");
+    FILE *file = fopen("NeuralNetwork/Dataset/convert.txt", "r");
 
     if (file == NULL)
     {
@@ -280,7 +272,7 @@ void train(char* path)
 
     char *line = NULL;
     size_t length = 0;
-    for (size_t i = 0; i < *lines; i++)
+    for (int i = 0; i < *lines; i++)
     {
         double *p = malloc(784 * sizeof(double));
 
@@ -293,57 +285,32 @@ void train(char* path)
             getline(&line, &length, file);
             line = strtok(line, "\n");
             double temp = strtol(line, NULL, 10);
-            p[j] = temp > 128 ? 1 : 0;
+            p[j] = temp == 1 ? 1 : 0;
         }
 
 
         desired_ouputs[i] = ouput;
         inputs[i] = p;
-
-        printf("Input n°:%zu\n", i + 1);
-
     }
 
     fclose(file);
 
+    //init network
+    network _neural;
+    network *_network = &_neural;
+    *_network = create_network(784, 16, 9, 3);
+    initialize_weights(_network);
 
     //trains the network
-   for (int epoch = 0; epoch < 200; epoch++)
+    for (int epoch = 0; epoch < 200; epoch++)
     {
-        for (int input_nb = 0; input_nb < 29900; input_nb++)
+        for (int input_nb = 0; input_nb < *lines; input_nb++)
         {
-            printf("Epoch n°:%d -- Input n°:%d\n", epoch + 1, input_nb + 1);
             forward_prop(_network, inputs[input_nb]);
             back_prop(_network, get_desired_ouputs(desired_ouputs[input_nb]));
             gradient_descent(_network, 0.01);
         }
     }
-
-    save(_network);
+    char* new_path = save(_network);
+    return new_path;
 }
-
-/*
-int main(int argc, char** argv)
-{
-    if (argc == 2)
-    {
-        test();
-    }
-    else if (argc == 3)
-    {
-        if (*argv[1] == '1')
-        {
-            train("Dataset/oui.txt");
-        }
-        else if (*argv[1] == '0')
-        {
-            create_file_to_solve(argv[2]);
-        }
-        else
-            errx(EXIT_FAILURE, "Usage:");
-    }
-    else
-        errx(EXIT_FAILURE, "Usage:");
-    return 0;
-}
-*/

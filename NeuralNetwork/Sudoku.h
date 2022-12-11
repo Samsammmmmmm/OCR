@@ -23,8 +23,6 @@ void create_file_to_solve(char* weights_path);
 
 void csv_to_txt(char* path, int* cpt);
 
-void train(char* path);
+char* train(char* path);
 
 void test();
-
-void train();

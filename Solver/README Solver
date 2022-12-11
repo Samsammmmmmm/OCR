@@ -1,5 +1,0 @@
-to test the solver, enter these:
-make
-./solver grid_00.txt
-cat grid_00.txt.result
-make clean

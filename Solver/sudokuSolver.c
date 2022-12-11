@@ -69,3 +69,13 @@ void print_grid(char grid[9][9])
         printf("\n");
     }
 }
+
+void solverM(char* path)
+{
+    char grid[9][9] = {{0}}; // initialize the grid we are going to solve
+    load_txtfile(path, grid);
+    //call the solver function on the grid
+    solver(grid);
+    //open a new file and save the grid in it
+    save_fileresult(path, grid);
+}

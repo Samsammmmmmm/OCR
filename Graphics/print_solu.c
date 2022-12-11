@@ -133,57 +133,57 @@ void image_result(SDL_Surface* grid, char file01[], char file02[])
             {
             case ('1'):
                 if (grid_to_solve[xbis] == '.')
-                    Case = load_image("number_1_orange.png");
+                    Case = load_image("Graphics/number_1_orange.png");
                 else
-                    Case = load_image("number_1_black.png");
+                    Case = load_image("Graphics/number_1_black.png");
                 break;
             case ('2'):
                 if (grid_to_solve[xbis] == '.')
-                    Case =load_image("number_2_orange.png");
+                    Case =load_image("Graphics/number_2_orange.png");
                 else
-                    Case =load_image("number_2_black.png");
+                    Case =load_image("Graphics/number_2_black.png");
                 break;
             case ('3'):
                 if (grid_to_solve[xbis] == '.')
-                    Case =  load_image("number_3_orange.png");
+                    Case =  load_image("Graphics/number_3_orange.png");
                 else
-                    Case =  load_image("number_3_black.png");
+                    Case =  load_image("Graphics/number_3_black.png");
                 break;
             case ('4'):
                 if (grid_to_solve[xbis] == '.')
-                    Case =  load_image("number_4_orange.png");
+                    Case =  load_image("Graphics/number_4_orange.png");
                 else
-                    Case =  load_image("number_4_black.png");
+                    Case =  load_image("Graphics/number_4_black.png");
                 break;
             case ('5'):
                 if (grid_to_solve[xbis] == '.')
-                    Case =  load_image("number_5_orange.png");
+                    Case =  load_image("Graphics/number_5_orange.png");
                 else
-                    Case =  load_image("number_5_black.png");
+                    Case =  load_image("Graphics/number_5_black.png");
                 break;
             case ('6'):
                 if (grid_to_solve[xbis] == '.')
-                    Case = load_image("number_6_orange.png");
+                    Case = load_image("Graphics/number_6_orange.png");
                 else
-                    Case = load_image("number_6_black.png");
+                    Case = load_image("Graphics/number_6_black.png");
                 break;
             case ('7'):
                 if (grid_to_solve[xbis] == '.')
-                    Case = load_image("number_7_orange.png");
+                    Case = load_image("Graphics/number_7_orange.png");
                 else
-                    Case = load_image("number_7_black.png");
+                    Case = load_image("Graphics/number_7_black.png");
                 break;
             case ('8'):
                 if (grid_to_solve[xbis] == '.')
-                    Case =  load_image("number_8_orange.png");
+                    Case =  load_image("Graphics/number_8_orange.png");
                 else
-                    Case =  load_image("number_8_black.png");
+                    Case =  load_image("Graphics/number_8_black.png");
                 break;
             default:
                 if (grid_to_solve[xbis] == '.')
-                    Case =  load_image("number_9_orange.png");
+                    Case =  load_image("Graphics/number_9_orange.png");
                 else
-                    Case = load_image("number_9_black.png");
+                    Case = load_image("Graphics/number_9_black.png");
                 break;
             }
             for (int x2 = 0 ; x2 < Case->w ; x2 ++)
@@ -206,7 +206,7 @@ void image_result(SDL_Surface* grid, char file01[], char file02[])
 
 void image_result_solu(char file01[], char file02[])
 {
-    SDL_Surface* load=load_image("empty_grid.png");
+    SDL_Surface* load=load_image("Graphics/empty_grid.png");
     image_result(load, file01, file02);
-    save_image(load, "load.png");
+    save_image(load, "UI/results/result.png");
 }

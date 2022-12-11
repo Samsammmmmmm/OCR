@@ -3,7 +3,7 @@
 #include <err.h>
 #include "NeuralNetwork.h"
 
-void save(network *_network);
+char* save(network *_network);
 
 network load(char* path);
 

@@ -1,2 +1,0 @@
-make hough
-./hough Canny/img1.jpeg

@@ -60,6 +60,7 @@ void on_file_set(GtkFileChooserButton *f)
 void on_button_solve_clicked(GtkButton *button)
 {
     // put all the functions that solve the grid
+    char* oui = configfile;
     img_process(filename);
     update_image((GtkContainer*) fixed, "BMP/result_resize.png", (GtkWidget*) grid); //image pretreatment
     SDL_Surface* image_surface = load_image2("BMP/ligns.png");
@@ -69,6 +70,11 @@ void on_button_solve_clicked(GtkButton *button)
     update_image((GtkContainer*) fixed, "BMP/detection_resize.png", (GtkWidget*) grid);
 
     create_file_to_solve(configfile);
+
+    solverM("to_solve_b.txt");
+    image_result_solu("to_solve_b.txt", "to_solve_b.txt.result");
+
+    update_image((GtkContainer*) fixed, "UI/results/result.png", (GtkWidget*) grid);
     //takes the solved grid in the files and displays it
     //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label
@@ -94,13 +100,12 @@ void on_button_save_clicked(GtkButton *button)
 
 void on_button_startergrid_clicked(GtkButton button)
 {
-    printf("coucou");
     update_image((GtkContainer*) fixed, "BMP/og.png", (GtkWidget*) grid);
 }
 
 void on_button_solved_clicked(GtkButton button)
 {
-    update_image((GtkContainer*) fixed, "UI/results/result.bmp", (GtkWidget*) grid);
+    update_image((GtkContainer*) fixed, "UI/results/result.png", (GtkWidget*) grid);
 }
 
 void on_button_pretreatment_clicked(GtkButton button)
@@ -133,16 +138,16 @@ void on_button_parameters_clicked(GtkButton *button)
 }
 void on_button_train_clicked(GtkButton *button)
 {
-    printf("train clicked\n");
+    char* oui = train(dataset);
+    configfile = oui;
 }
 void on_dataset_set(GtkFileChooserButton *f)
 {
-    printf("dataset clicked\n");
-    //filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(f));
+    dataset = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(f));
 }
 void on_config_set(GtkFileChooserButton *f)
 {
-     printf("config clicked\n");
+    configfile = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(f));
 }
 
 int main (int argc, char *argv[])
