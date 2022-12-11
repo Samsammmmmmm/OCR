@@ -25,7 +25,7 @@ GtkImage* grid;
 gchar *filename = NULL;
 //widget from other functions
 gchar *dataset = NULL;
-gchar *configfile = NULL;
+gchar *configfile = "NeuralNetwork/Weights/weights_12072022_013155.txt";
 
 // function that recreate the new image selected
 void update_image(GtkContainer* fixed, gchar* filename, GtkWidget* grid)
@@ -68,7 +68,7 @@ void on_button_solve_clicked(GtkButton *button)
 
     update_image((GtkContainer*) fixed, "BMP/detection_resize.png", (GtkWidget*) grid);
 
-    create_file_to_solve("NeuralNetwork/Weights/weights_12112022_104119.txt");
+    create_file_to_solve(configfile);
     //takes the solved grid in the files and displays it
     //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label
@@ -83,7 +83,7 @@ void on_button_save_clicked(GtkButton *button)
     SDL_Surface* solved_surface;
     gchar* fileresult = "Graphics/load.png"; // put the name of the solved grid
     solved_surface = IMG_Load(fileresult);
-    if (SDL_SaveBMP(solved_surface, "results/result.bmp") != 0)
+    if (SDL_SaveBMP(solved_surface, "UI/results/result.bmp") != 0)
     {
         printf("Error : %s\n", SDL_GetError());
         }
@@ -100,7 +100,7 @@ void on_button_startergrid_clicked(GtkButton button)
 
 void on_button_solved_clicked(GtkButton button)
 {
-    update_image((GtkContainer*) fixed, "results/result_resize.png", (GtkWidget*) grid);
+    update_image((GtkContainer*) fixed, "UI/results/result.bmp", (GtkWidget*) grid);
 }
 
 void on_button_pretreatment_clicked(GtkButton button)

@@ -293,7 +293,7 @@ int img_process(char* filename)
     otsu_tresholding(detect_ligns);
     sobel_filter(detect_ligns);
     save_image(detect_ligns, "BMP/ligns.png");
-    save_resize_ff(detect_ligns, 500, 500);
+    save_resize_ff(surface, 500, 500);
 
   
     // - Free the surface.
