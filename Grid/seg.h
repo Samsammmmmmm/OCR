@@ -19,7 +19,7 @@ void put_pixel2(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 
 SDL_Surface* block_resize(SDL_Surface *block, int w, int h);
 
-void save_resize(SDL_Surface *block, int pix_w, int pix_h);
+void save_resize(SDL_Surface *block, int pix_w, int pix_h, char* path);
 
 void setlines(SDL_Surface *image, int *x, int *y);
 

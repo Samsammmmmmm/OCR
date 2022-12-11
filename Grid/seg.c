@@ -100,9 +100,9 @@ SDL_Surface* block_resize(SDL_Surface *block, int pix_w, int pix_h)
   return wanted_surf_dim;
 }
 
-void save_resize(SDL_Surface *block, int pix_w, int pix_h)
+void save_resize(SDL_Surface *block, int pix_w, int pix_h, char* path)
 {
-    IMG_SavePNG(block_resize(block, pix_w, pix_h), "BMP/detection_resize.png");
+    IMG_SavePNG(block_resize(block, pix_w, pix_h), path);
 }
 
 void setlines(SDL_Surface *image, int *x, int *y)
@@ -275,7 +275,7 @@ void segmentation(SDL_Surface *image, SDL_Surface* image2)
     }
     setlines(image2,x,y);
     IMG_SavePNG(image2, "BMP/detection.png");
-    save_resize(image2, 500, 500);
+    save_resize(image2, 500, 500, "BMP/detection_resize.png");
 	free(x);
 	free(y);
     //SDL_FreeSurface(image);

@@ -3,6 +3,22 @@
 // Converts a colored pixel into grayscale tyhen in black and white.
 // surface: surface to transform
 
+SDL_Surface* block_resize_ff(SDL_Surface *block, int pix_w, int pix_h)
+{
+    // Create a new surface with the desired dimensions
+    SDL_Surface* wanted_surf_dim = SDL_CreateRGBSurface(0, pix_w, pix_h, 32, 0, 0, 0, 0);
+
+    // Copy the pixels from the original surface and scale them to the new size
+    SDL_BlitScaled(block, NULL, wanted_surf_dim, NULL);
+
+    return wanted_surf_dim;
+}
+
+void save_resize_ff(SDL_Surface *block, int pix_w, int pix_h)
+{
+    IMG_SavePNG(block_resize_ff(block, pix_w, pix_h), "BMP/result_resize.png");
+}
+
 void surface_to_grayscale(SDL_Surface* surface)
 {
     Uint32* pixels = surface->pixels;
@@ -253,7 +269,7 @@ void sobel_filter(SDL_Surface* surface)
 }
 
 
-int img_process(gchar* filename)
+int img_process(char* filename)
 {
     SDL_Surface* surface = load_image(filename);
     if (surface == NULL)
@@ -270,13 +286,14 @@ int img_process(gchar* filename)
     contrast(surface);
     otsu_tresholding(surface);
     median_filter(surface);
-    save_image(surface, "../BMP/result.png");
+    save_image(surface, "BMP/result.png");
 
     gamma_filter(detect_ligns);
     contrast(detect_ligns);
     otsu_tresholding(detect_ligns);
     sobel_filter(detect_ligns);
-    save_image(detect_ligns, "../BMP/ligns.png");
+    save_image(detect_ligns, "BMP/ligns.png");
+    save_resize_ff(detect_ligns, 500, 500);
 
   
     // - Free the surface.

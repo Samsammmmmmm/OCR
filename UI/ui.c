@@ -11,10 +11,10 @@ GtkButton* button_solve;
 GtkButton* button_save;
 GtkButton* button_parameters;
 GtkButton* button_train;
-/*GtkButton* button_startergrid;
+GtkButton* button_startergrid;
 GtkButton* button_pretreatment;
 GtkButton* button_lignesdetec;
-GtkButton* button_solved;*/
+GtkButton* button_solved;
 GtkLabel* label_step;
 GtkLabel* label_dataset;
 GtkLabel* label_config;
@@ -46,7 +46,9 @@ void on_file_set(GtkFileChooserButton *f)
     printf("file name: %s\n", filename);
     printf("folder name: %s\n", gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER(f)));
     //charge the image
-    update_image((GtkContainer*) fixed, filename, (GtkWidget*) grid);
+    SDL_Surface *surface = load_image(filename);
+    save_resize(surface, 500, 500, "BMP/og.png");
+    update_image((GtkContainer*) fixed, "BMP/og.png", (GtkWidget*) grid);
     //change the step label to charging the picture
     gtk_label_set_label((GtkLabel*)label_step, "step in progress : charging the image\n");
     // activate the button solve
@@ -58,10 +60,10 @@ void on_file_set(GtkFileChooserButton *f)
 void on_button_solve_clicked(GtkButton *button)
 {
     // put all the functions that solve the grid
-    //img_process(filename);
-    //update_image((GtkContainer*) fixed, "BMP/result.png", (GtkWidget*) grid); //image pretreatment
-    SDL_Surface* image_surface = load_image2("BMP/ligns1.png");
-    SDL_Surface* image_filtered = load_image2("BMP/result1.png");
+    img_process(filename);
+    update_image((GtkContainer*) fixed, "BMP/result_resize.png", (GtkWidget*) grid); //image pretreatment
+    SDL_Surface* image_surface = load_image2("BMP/ligns.png");
+    SDL_Surface* image_filtered = load_image2("BMP/result.png");
     segmentation(image_surface, image_filtered);
 
     update_image((GtkContainer*) fixed, "BMP/detection_resize.png", (GtkWidget*) grid);
@@ -88,6 +90,27 @@ void on_button_save_clicked(GtkButton *button)
 
     //change the step label
     gtk_label_set_label((GtkLabel*)label_step, "step in progress : grid saved in the folder /results\n");
+}
+
+void on_button_startergrid_clicked(GtkButton button)
+{
+    printf("coucou");
+    update_image((GtkContainer*) fixed, "BMP/og.png", (GtkWidget*) grid);
+}
+
+void on_button_solved_clicked(GtkButton button)
+{
+    update_image((GtkContainer*) fixed, "results/result_resize.png", (GtkWidget*) grid);
+}
+
+void on_button_pretreatment_clicked(GtkButton button)
+{
+    update_image((GtkContainer*) fixed, "BMP/result_resize.png", (GtkWidget*) grid);
+}
+
+void on_button_lignesdetec_clicked(GtkButton button)
+{
+    update_image((GtkContainer*) fixed, "BMP/detection_resize.png", (GtkWidget*) grid);
 }
 
 void on_button_parameters_clicked(GtkButton *button)
@@ -147,6 +170,10 @@ int main (int argc, char *argv[])
     button_solve = GTK_BUTTON(gtk_builder_get_object(builder, "button_solve"));
     button_save = GTK_BUTTON(gtk_builder_get_object(builder, "button_save"));
     button_train = GTK_BUTTON(gtk_builder_get_object(builder, "button_train"));
+    button_startergrid = GTK_BUTTON(gtk_builder_get_object(builder, "button_startergrid"));
+    button_pretreatment = GTK_BUTTON(gtk_builder_get_object(builder, "button_pretreatment"));
+    button_lignesdetec = GTK_BUTTON(gtk_builder_get_object(builder, "button_lignesdetec"));
+    button_solved = GTK_BUTTON(gtk_builder_get_object(builder, "button_solved"));
     label_step = GTK_LABEL(gtk_builder_get_object(builder, "label_step"));
     label_dataset = GTK_LABEL(gtk_builder_get_object(builder, "label_dataset"));
     label_config = GTK_LABEL(gtk_builder_get_object(builder, "label_config"));
@@ -161,6 +188,10 @@ int main (int argc, char *argv[])
     g_signal_connect(button_train, "clicked", G_CALLBACK(on_button_train_clicked), NULL);
     g_signal_connect(button_solve, "clicked", G_CALLBACK(on_button_solve_clicked), NULL);
     g_signal_connect(button_save, "clicked", G_CALLBACK(on_button_save_clicked), NULL);
+    g_signal_connect(button_startergrid, "clicked", G_CALLBACK(on_button_startergrid_clicked), NULL);
+    g_signal_connect(button_pretreatment, "clicked", G_CALLBACK(on_button_pretreatment_clicked), NULL);
+    g_signal_connect(button_lignesdetec, "clicked", G_CALLBACK(on_button_lignesdetec_clicked), NULL);
+    g_signal_connect(button_solved, "clicked", G_CALLBACK(on_button_solved_clicked), NULL);
     g_signal_connect(button_file_chooser, "file-set", G_CALLBACK(on_file_set), NULL);
     g_signal_connect(button_dataset_chooser, "file-set", G_CALLBACK(on_dataset_set), NULL);
     g_signal_connect(button_config_chooser, "file-set", G_CALLBACK(on_config_set), NULL);
