@@ -1,12 +1,5 @@
-#include <gtk/gtk.h>
-#include <err.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <signal.h>
-#include <string.h>
-#include "../Image_processing/basics.h"
+#include "ui.h"
+
 // add the headers of all the parts to call the diffrent functions
 
 
@@ -18,6 +11,10 @@ GtkButton* button_solve;
 GtkButton* button_save;
 GtkButton* button_parameters;
 GtkButton* button_train;
+/*GtkButton* button_startergrid;
+GtkButton* button_pretreatment;
+GtkButton* button_lignesdetec;
+GtkButton* button_solved;*/
 GtkLabel* label_step;
 GtkLabel* label_dataset;
 GtkLabel* label_config;
@@ -26,6 +23,7 @@ GtkFileChooserButton* button_dataset_chooser;
 GtkFileChooserButton* button_config_chooser;
 GtkImage* grid;
 gchar *filename = NULL;
+//widget from other functions
 gchar *dataset = NULL;
 gchar *configfile = NULL;
 
@@ -56,16 +54,14 @@ void on_file_set(GtkFileChooserButton *f)
     gtk_widget_set_sensitive ((GtkWidget*) button_save, FALSE);
 }
 
-
 // event handler for the solve button. Call all the functions to solve the grid
 void on_button_solve_clicked(GtkButton *button)
 {
     // put all the functions that solve the grid
-    
+    img_process(filename);
+    update_image((GtkContainer*) fixed, "../BMP/result.png", (GtkWidget*) grid);
     //takes the solved grid in the files and displays it
-    
-    update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
-    
+    //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label
     gtk_label_set_label((GtkLabel*)label_step, "step in progress : grid solved\n");
     // activate the button save
@@ -112,6 +108,7 @@ void on_button_train_clicked(GtkButton *button)
 void on_dataset_set(GtkFileChooserButton *f)
 {
     printf("dataset clicked\n");
+    //filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(f));
 }
 void on_config_set(GtkFileChooserButton *f)
 {

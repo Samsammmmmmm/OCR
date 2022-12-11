@@ -9,13 +9,13 @@
 
 void init_sdl();
 
-SDL_Surface* load_image(char *path);
+SDL_Surface* load_image2(char *path);
 
 Uint8* pixel_ref(SDL_Surface *surf, unsigned x, unsigned y);
 
-Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y);
+Uint32 get_pixel2(SDL_Surface *surface, unsigned x, unsigned y);
 
-void put_pixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
+void put_pixel2(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel);
 
 SDL_Surface* block_resize(SDL_Surface *block, int w, int h);
 
