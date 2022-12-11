@@ -322,7 +322,7 @@ void train(char* path)
     save(_network);
 }
 
-
+/*
 int main(int argc, char** argv)
 {
     if (argc == 2)
@@ -346,3 +346,4 @@ int main(int argc, char** argv)
         errx(EXIT_FAILURE, "Usage:");
     return 0;
 }
+*/
