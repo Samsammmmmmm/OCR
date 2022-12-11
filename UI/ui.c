@@ -60,11 +60,13 @@ void on_button_solve_clicked(GtkButton *button)
     // put all the functions that solve the grid
     img_process(filename);
     //update_image((GtkContainer*) fixed, "BMP/result.png", (GtkWidget*) grid); //image pretreatment
-    SDL_Surface* image_surface = load_image2("/BMP/ligns1.png");
-    SDL_Surface* image_filtered = load_image2("/BMP/result1.png");
+    SDL_Surface* image_surface = load_image2("BMP/ligns1.png");
+    SDL_Surface* image_filtered = load_image2("BMP/result1.png");
     segmentation(image_surface, image_filtered);
-    
-    update_image((GtkContainer*) fixed, "BMP/detection.jpg", (GtkWidget*) grid);
+
+    update_image((GtkContainer*) fixed, "BMP/detection_resize.png", (GtkWidget*) grid);
+
+
     //takes the solved grid in the files and displays it
     //update_image((GtkContainer*) fixed, "../Graphics/load.png", (GtkWidget*) grid);
     //change the step label
